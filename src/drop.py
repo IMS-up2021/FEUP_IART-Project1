@@ -21,14 +21,14 @@ def main():
     state = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     
     photon = {
-                'red':[{'green':'moregreen', 'blue':''}, {'green':'yellow', 'blue':'purple'}, []],
+                'red':[{'green':'moregreen', 'blue':'purple', 'cyan':'cyan'}, {'green':'yellow', 'blue':'purple'}, []],
                 'white':[0, 0, ['red', 'green', 'blue']],
-                'blue':[{}, {'green':'cyan', 'red':'purple'}, []],
+                'blue':[{'red':'violet', 'green':'aqua_green', 'yellow':'light_yellow'}, {'green':'cyan', 'red':'purple'}, []],
                 'green':[{'red':'orange', 'blue':'blue_sky', 'purple':'pink'}, {'red':'yellow', 'blue':'cyan'}, []],
                 'cyan':[{'red':'beige'},{'red':'white'},['blue', 'green']],
                 'yellow':[{'blue':'light_blue'},{'blue':'white'},['red', 'green']],
                 'purple':[{'green':'light_green'},{'green':'white'},['red', 'blue']]
-    }
+    } #{photon:[{pigment:mix}, {photon:mix}, [splits]]}
     
     goal = []
     
