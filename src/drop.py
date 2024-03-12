@@ -33,21 +33,21 @@ coords = [(250, 100),(550, 100),
               (250, 560),(550, 560)] #to draw board
 
 def check_can_photon_split(state, to_check):
-    if photon[state[to_check]] in photon:
-        return photon[state[to_check]] == []
+    if photon[state[0][to_check]] in photon:
+        return photon[state[0][to_check]] == []
     return 1
 
 def check_empty(state, to_check):
-    return state[to_check] == 0
+    return state[0][to_check] == 0
 
 def check_can_merge(state, fr, to): #can merge color
-    return state[to] in photon[state[fr]]
+    return state[0][to] in photon[state[fr]]
 
 def check_can_move(state, fr, to): #can move to space (empty and connected)
     return to in nodes[fr]
 
-def check_win(state, goal):
-    return state == goal
+def check_win(state):
+    return state[0] == state[3]
 
 def split(state, photon):
     if check_can_photon_split(state, photon):
@@ -58,13 +58,13 @@ def move(state, fr, to):
     if check_can_move(state, fr, to):
         return 1
     elif check_empty(to):
-        state[to] = state[fr]
-        state[fr] = 0
-        return 0
+        state[0][to] = state[0][fr]
+        state[0][fr] = 0
+        return state
     elif check_can_merge(state, fr, to):
-        state[to] = photon[state[to]][state[fr]]
-        state[fr] = 0
-        return 0
+        state[0][to] = photon[state[0][to]][state[0][fr]]
+        state[0][fr] = 0
+        return state
     return 1
 
 def draw_photon(p_draw, screen, coord):
@@ -73,15 +73,14 @@ def draw_photon(p_draw, screen, coord):
     else:
         pygame.draw.circle(screen, (105, 105, 105), coord, 20)
 
-def draw_board(state, screen):
+def draw_board(board, screen):
     i = 0
     
     while i < len(coords):
-        draw_photon(state[0][i], screen, coords[i])
+        draw_photon(board[i], screen, coords[i])
         i += 1
         
-    
-    
+    #draw_photon(state[1], screen, (100, 700))
 
 def main():
     state = [[
@@ -94,7 +93,18 @@ def main():
               'blue',0,
               'blue',
               0,0
-             ], 0, 0,[]] #board, selected, nº remaining moves, goal
+             ], 'red', 0,
+             [
+              0,0,
+              0,
+              0,'yellow',
+              0,0,
+              0,'purple','white',0,0,
+              0,0,
+              0,'cyan',
+              0,
+              0,0
+             ]] #board, selected, nº remaining moves, goal
 
     pygame.init()
 
@@ -106,11 +116,14 @@ def main():
     run = True
     selected = False
     
+    state = move(state, 2, 1)
+    
     while run:
         
         l = 40
         
-        draw_board(state, screen)
+        draw_board(state[0], screen)
+        #draw_board(state[3], screen)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -122,7 +135,6 @@ def main():
         #}
             
         pygame.display.update()
-            
     
     return 0
 
