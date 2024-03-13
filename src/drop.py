@@ -1,9 +1,10 @@
+from math import sqrt
 import pygame
 
 photon = {
-            'red':[(255,0,0),{'green':'moregreen', 'blue':'purple', 'cyan':'cyan'}, {'green':'yellow', 'blue':'purple'}, []],
-            'blue':[(0,0,255),{'red':'violet', 'green':'aqua_green', 'yellow':'light_yellow'}, {'green':'cyan', 'red':'purple'}, []],
-            'green':[(0,255,0),{'red':'orange', 'blue':'blue_sky', 'purple':'pink'}, {'red':'yellow', 'blue':'cyan'}, []],
+            'red':[(255,0,0),{'green':'moregreen', 'blue':'purple', 'cyan':'cyan'}, {'green':'yellow', 'blue':'purple', 'cyan':'white'}, []],
+            'blue':[(0,0,255),{'red':'violet', 'green':'aqua_green', 'yellow':'light_yellow'}, {'green':'cyan', 'red':'purple', 'yellow':'white'}, []],
+            'green':[(0,255,0),{'red':'orange', 'blue':'blue_sky', 'purple':'pink'}, {'red':'yellow', 'blue':'cyan', 'purple':'white'}, []],
             'cyan':[(0,255,255),{'red':'beige'},{'red':'white'},['blue', 'green']],
             'yellow':[(255,255,0),{'blue':'light_blue'},{'blue':'white'},['red', 'green']],
             'purple':[(255,0,255),{'green':'light_green'},{'green':'white'},['red', 'blue']],
@@ -13,7 +14,7 @@ photon = {
 nodes = {
         0:[2,3,5], 1:[2,4,6], 
         2:[1,2,4,5], 
-        3:[0,2,5], 4:[1,2,6], 
+        3:[0,2,5,9], 4:[1,2,6,9], 
         5:[0,3,7,8], 6:[1,4,10,11], 
         7:[5,8,12], 8:[5,7,9,12], 9:[3,4,8,10,14,15], 10:[6,9,11,13], 11:[6,10,13],
         12:[7,8,9,14,17], 13:[10,11,15,18],
@@ -78,6 +79,20 @@ def draw_board(board, screen):
         draw_photon(board[i], screen, coords[i])
         i += 1
         
+def dist_points(pos_1, pos_2):
+    return sqrt((pos_1[0] - pos_2[0])**2+(pos_1[1] - pos_2[1])**2)
+         
+
+def in_circle(to_check):
+    i = 0
+    
+    while i < len(coords):
+        if dist_points(coords[i], to_check) < 20:
+            return i
+        i += 1
+    
+    return -1
+        
 
 def main():
     state = [[
@@ -90,7 +105,7 @@ def main():
               'blue',0,
               'blue',
               0,0
-             ], 0, 0,
+             ], [0,'none'], 0,
              [
               0,0,
               0,
@@ -101,7 +116,7 @@ def main():
               0,'cyan',
               0,
               0,0
-             ]] #board, selected, nº remaining moves, goal
+             ]] #board, selected (color,pos), nº remaining moves, goal
 
     pygame.init()
 
@@ -113,26 +128,30 @@ def main():
     run = True
     selected = False
     
-    #state = move(state, 2, 4)
-    #state = move(state, 6, 4)
-    
     while run:
         
         l = 40
         
         draw_board(state[0], screen)
-        #draw_board(state[3], screen)
 
-        draw_photon(state[1], screen, [100,700])
+        draw_photon(state[1][0], screen, [100,700])
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-        
-           
-        #if(pygame.mouse.get_pressed[0] and in_circle(pygame.mouse.get_pos())){
-        #    
-        #}
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if(pygame.mouse.get_pressed()[0]):
+                    chosen_space = in_circle(pygame.mouse.get_pos())
+                    
+                    if chosen_space != -1:
+                        if state[1][0] != 0:
+                            state = move(state, state[1][1], chosen_space)
+                            state[1][0] = 0
+                            state[1][1] = 'none'
+                        else:
+                            state[1][0] = state[0][chosen_space]
+                            state[1][1] = chosen_space
+            
             
         pygame.display.update()
     
