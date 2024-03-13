@@ -41,10 +41,10 @@ def check_empty(state, to_check):
     return state[0][to_check] == 0
 
 def check_can_merge(state, fr, to): #can merge color
-    return state[0][to] in photon[state[fr]]
+    return state[0][to] in photon[state[0][fr]][2]
 
 def check_can_move(state, fr, to): #can move to space (empty and connected)
-    return to in nodes[fr]
+    return not(to in nodes[fr])
 
 def check_win(state):
     return state[0] == state[3]
@@ -56,16 +56,14 @@ def split(state, photon):
         
 def move(state, fr, to):
     if check_can_move(state, fr, to):
-        return 1
-    elif check_empty(to):
+        return state
+    elif check_empty(state, to):
         state[0][to] = state[0][fr]
         state[0][fr] = 0
-        return state
     elif check_can_merge(state, fr, to):
-        state[0][to] = photon[state[0][to]][state[0][fr]]
+        state[0][to] = photon[state[0][to]][2][state[0][fr]]
         state[0][fr] = 0
-        return state
-    return 1
+    return state
 
 def draw_photon(p_draw, screen, coord):
     if p_draw in photon:
@@ -80,7 +78,6 @@ def draw_board(board, screen):
         draw_photon(board[i], screen, coords[i])
         i += 1
         
-    #draw_photon(state[1], screen, (100, 700))
 
 def main():
     state = [[
@@ -93,7 +90,7 @@ def main():
               'blue',0,
               'blue',
               0,0
-             ], 'red', 0,
+             ], 0, 0,
              [
               0,0,
               0,
@@ -116,7 +113,8 @@ def main():
     run = True
     selected = False
     
-    state = move(state, 2, 1)
+    #state = move(state, 2, 4)
+    #state = move(state, 6, 4)
     
     while run:
         
@@ -124,6 +122,8 @@ def main():
         
         draw_board(state[0], screen)
         #draw_board(state[3], screen)
+
+        draw_photon(state[1], screen, [100,700])
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
