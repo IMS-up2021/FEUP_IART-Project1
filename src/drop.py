@@ -8,7 +8,7 @@ photon = {
             'cyan':[(0,255,255),{'red':'beige'},{'red':'white'},['blue', 'green']],
             'yellow':[(255,255,0),{'blue':'light_blue'},{'blue':'white'},['red', 'green']],
             'purple':[(255,0,255),{'green':'light_green'},{'green':'white'},['red', 'blue']],
-            'white':[(255,255,255),0, 0, ['red', 'green', 'blue']]
+            'white':[(255,255,255),{}, {}, ['red', 'green', 'blue']]
         } #{photon:[code, {pigment:mix}, {photon:mix}, [splits]]}
 
 nodes = {
@@ -64,6 +64,7 @@ def move(state, fr, to):
     elif check_can_merge(state, fr, to):
         state[0][to] = photon[state[0][to]][2][state[0][fr]]
         state[0][fr] = 0
+    state[2] -= 1
     return state
 
 def draw_photon(p_draw, screen, coord):
@@ -105,7 +106,7 @@ def main():
               'blue',0,
               'blue',
               0,0
-             ], [0,'none'], 0,
+             ], [0,'none'], 9,
              [
               0,0,
               0,
@@ -120,6 +121,8 @@ def main():
 
     pygame.init()
 
+    moves = []
+
     screen_width = 800
     screen_height = 800
     
@@ -132,6 +135,11 @@ def main():
         
         l = 40
         
+        if(check_win(state)):
+            run = False
+            print('you win!!')
+            continue
+        
         draw_board(state[0], screen)
 
         draw_photon(state[1][0], screen, [100,700])
@@ -139,15 +147,24 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+            
+            if event.type == pygame.KEYDOWN:
+                print(event.key)
+                if event.key == pygame.K_ESCAPE and len(moves) > 0:
+                    state = moves[0]
+                    moves.pop()
+                
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if(pygame.mouse.get_pressed()[0]):
                     chosen_space = in_circle(pygame.mouse.get_pos())
                     
                     if chosen_space != -1:
+                        moves.append(state)
                         if state[1][0] != 0:
                             state = move(state, state[1][1], chosen_space)
                             state[1][0] = 0
                             state[1][1] = 'none'
+                            print(state[2])
                         else:
                             state[1][0] = state[0][chosen_space]
                             state[1][1] = chosen_space
