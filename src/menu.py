@@ -3,9 +3,9 @@ import pygame, sys
 pygame.init()
 
 SCREEN = pygame.display.set_mode((1280, 720))
-pygame.display.set_caption("Menu")
+pygame.display.set_caption("Drop of Light")
 
-BG = pygame.image.load("assets_menu/Background.png")
+
 
 def initialize_screen():
     pygame.init()
@@ -40,7 +40,7 @@ class Button:
         if self.rect.collidepoint(mouse_pos):
             self.base_color = self.hovering_color
         else:
-            self.base_color = "white"
+            self.base_color = (139, 0, 39)
 
     def checkForInput(self, mouse_pos):
         return self.rect.collidepoint(mouse_pos)
@@ -49,16 +49,16 @@ def main_menu():
     screen = initialize_screen()
     
     while True:
-        screen.blit(BG, (0, 0))
+        screen.fill((0, 0, 0))
 
-        display_text(screen, "MAIN MENU", 60, (0, 0, 0), (640, 100))
+        display_text(screen, "MAIN MENU", 60, (139, 0, 39), (640, 100))
 
-        play_button = create_button((640, 250), "PLAY", 40,(200 ,200 ,200), (100 ,100 ,100))
-        options_button = create_button((640 ,400), "OPTIONS", 40,(200 ,200 ,200), (100 ,100 ,100))
+        play_button = create_button((640, 250), "PLAY", 40, (128, 0, 32), (100 ,100 ,100))
+        options_button = create_button((640 ,400), "INSTRUCTIONS", 40,(200 ,200 ,200), (100 ,100 ,100))
         quit_button = create_button((640 ,550), "QUIT", 40,(200 ,200 ,200), (100 ,100 ,100))
 
         for button in [play_button ,options_button ,quit_button]:
-            button.rect = pygame.Rect(button.pos[0] - 120 ,button.pos[1] - 40 ,240 ,80)
+            button.rect = pygame.Rect(button.pos[0] - 180 ,button.pos[1] - 40 ,360 ,80)
             button.changeColor(pygame.mouse.get_pos())
             button.update(screen)
 
@@ -86,7 +86,7 @@ def play():
         
         display_text(screen ,"THIS IS THE PLAY SCREEN" ,40 ,(255 ,255 ,255) ,(640 ,260))
 
-        back_button = create_button((640 ,460) ,"BACK" ,50 ,(255 ,255 ,255) ,(0 ,255 ,0))
+        back_button = create_button((640 ,460) ,"BACK" ,50 ,(255 ,255 ,255) ,(100 ,100 ,100))
         
         back_button.rect = pygame.Rect(back_button.pos[0] - 75 ,back_button.pos[1] - 25 ,150 ,50)
         
@@ -109,13 +109,19 @@ def options():
     screen = initialize_screen()
 
     while True:
-        screen.fill((255 ,255 ,255))
-        
-        display_text(screen ,"THIS IS THE OPTIONS SCREEN" ,40 ,(0 ,0 ,0) ,(640 ,260))
+        screen.fill((0, 0, 0))
+        display_text(screen, "INSTRUCTIONS", 60, (139, 0, 39), (640, 100))
 
-        back_button = create_button((640 ,460) ,"BACK" ,50 ,(0 ,0 ,0) ,(0 ,255 ,0))
+        display_text(screen, "Drops of Light is a single player puzzle", 20, (255, 255, 255), (640, 260))
+        display_text(screen, "game that's played on a star shaped web.", 20, (255, 255, 255), (640, 285))
+        display_text(screen,"On the web are what look like coloured beads,", 20, (255, 255, 255), (640, 310))
+        display_text(screen,"these are photons and the puzzle is to move,", 20, (255, 255, 255), (640, 335))
+        display_text(screen,"arrange and combine the photons to produce a", 20, (255, 255, 255), (640, 360))
+        display_text(screen,"specific pattern of colours.", 20, (255, 255, 255), (640, 385))
+
+        back_button = create_button((640, 460), "BACK", 50, (0, 0, 0), (100, 100, 100))
         
-        back_button.rect = pygame.Rect(back_button.pos[0] - 75 ,back_button.pos[1] - 25 ,150 ,50)
+        back_button.rect = pygame.Rect(back_button.pos[0] - 75, back_button.pos[1] - 25, 150, 50)
         
         back_button.changeColor(pygame.mouse.get_pos())
         
@@ -131,6 +137,7 @@ def options():
                     main_menu()
 
         pygame.display.update()
+
 
 if __name__ == "__main__":
     main_menu()
