@@ -51,26 +51,26 @@ LEVELS = {
     ],
     3:[
         [   
-            0,0,
-            0,
-            0,0,
-            0,0,
-            0,0,0,0,0,
-            0,0,
-            0,0,
-            0,
-            0,0
-            ], 0, 0,
+            'yellow','white',
+            'green',
+            'green','white',
+            'green','blue',
+            'white','white',0,'blue','cyan',
+            'red','blue',
+            'red','white',
+            'red',
+            'purple','white'
+            ], 0, 16,
             [
-            0,0,
-            0,
-            0,0,
-            0,0,
-            0,0,0,0,0,
-            0,0,
-            0,0,
-            0,
-            0,0
+            'cyan','white',
+            'green',
+            'green','white',
+            'green','blue',
+            'white','white',0,'blue','purple',
+            'red','blue',
+            'red','white',
+            'red',
+            'yellow','white'
             ]
     ],
     4:[
