@@ -75,26 +75,26 @@ LEVELS = {
     ],
     4:[
         [   
-            0,0,
+            'white','white',
             0,
             0,0,
             0,0,
-            0,0,0,0,0,
+            0,0,'yellow',0,0,
             0,0,
-            0,0,
+            'yellow','yellow',
             0,
-            0,0
+            'yellow','yellow'
             ], 0, 0,
             [
+            'yellow','yellow',
+            0,
+            'yellow','yellow',
+            0,0,
+            0,0,'yellow',0,0,
+            0,0,
             0,0,
             0,
-            0,0,
-            0,0,
-            0,0,0,0,0,
-            0,0,
-            0,0,
-            0,
-            0,0
+            'white','white'
             ]
     ],
     5:[
