@@ -37,7 +37,7 @@ piece = {
             #empty space
             0:[(105, 105, 105),False,{},{},[]]
             
-        } #{piece:[code, can be moved, {pigment:mix}, {photon:mix}, [splits]]}
+        } #{piece:[code, can be moved, {pigment:mix}, {photon:mix}, [splits]]} to change splits -> (selects, leaves behind)
 
 nodes = {
         0:[2,3,5], 1:[2,4,6], 
