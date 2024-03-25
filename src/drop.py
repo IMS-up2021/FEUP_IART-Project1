@@ -1,15 +1,43 @@
 from math import sqrt
 import pygame
 
-photon = {
-            'red':[(255,0,0),{'green':'moregreen', 'blue':'purple', 'cyan':'cyan'}, {'green':'yellow', 'blue':'purple', 'cyan':'white'}, []],
-            'blue':[(0,0,255),{'red':'violet', 'green':'aqua_green', 'yellow':'light_yellow'}, {'green':'cyan', 'red':'purple', 'yellow':'white'}, []],
-            'green':[(0,255,0),{'red':'orange', 'blue':'blue_sky', 'purple':'pink'}, {'red':'yellow', 'blue':'cyan', 'purple':'white'}, []],
-            'cyan':[(0,255,255),{'red':'beige'},{'red':'white'},['blue', 'green']],
-            'yellow':[(255,255,0),{'blue':'light_blue'},{'blue':'white'},['red', 'green']],
-            'purple':[(255,0,255),{'green':'light_green'},{'green':'white'},['red', 'blue']],
-            'white':[(255,255,255),{}, {}, ['red', 'green', 'blue']]
-        } #{photon:[code, {pigment:mix}, {photon:mix}, [splits]]}
+piece = {
+            #photons
+            'ph_red':[(127,0,0),True,{'ph_green':'moreph_green', 'ph_blue':'ph_magenta', 'ph_cyan':'ph_cyan'}, {'ph_green':'ph_yellow', 'ph_blue':'ph_magenta', 'ph_cyan':'ph_white'}, []],
+            'ph_blue':[(0,0,127),True,{'ph_red':'ph_magenta', 'ph_green':'aqua_ph_green', 'ph_yellow':'light_ph_yellow'}, {'ph_green':'ph_cyan', 'ph_red':'ph_magenta', 'ph_yellow':'ph_white'}, []],
+            'ph_green':[(0,127,0),True,{'ph_red':'orange', 'ph_blue':'ph_blue_sky', 'ph_magenta':'pink'}, {'ph_red':'ph_yellow', 'ph_blue':'ph_cyan', 'ph_magenta':'ph_white'}, []],
+            'ph_cyan':[(0,127,127),True,{'ph_red':'beige'},{'ph_red':'ph_white'},['ph_blue', 'ph_green']],
+            'ph_yellow':[(127,127,0),True,{'ph_blue':'light_ph_blue'},{'ph_blue':'ph_white'},['ph_red', 'ph_green']],
+            'ph_magenta':[(127,0,127),True,{'ph_green':'light_ph_green'},{'ph_green':'ph_white'},['ph_red', 'ph_blue']],
+            'ph_white':[(127,127,127),True,{}, {}, ['ph_red', 'ph_green', 'ph_blue']],
+            
+            #elemental pigments
+            'pi_red':[(255,0,0),False,{},{},[]],
+            'pi_blue':[(0,0,255),False,{},{},[]],
+            'pi_green':[(0,255,0),False,{},{},[]],
+            'pi_cyan':[(0,255,255),False,{},{},[]],
+            'pi_yellow':[(255,255,0),False,{},{},[]],
+            'pi_magenta':[(255,0,255),False,{},{},[]],
+            'pi_white':[(255,255,255),False,{},{},[]],
+            
+            #mix pigments
+            'pi_orange':[(255,127,0),False,{},{},[]],
+            'pi_violet':[(255,0,127),False,{},{},[]],
+            'pi_pink':[(255,127,127),False,{},{},[]],
+            'pi_lime':[(127,255,0),False,{},{},[]],
+            'pi_mint':[(0,255,127),False,{},{},[]],
+            'pi_pistachio':[(127,255,127),False,{},{},[]],
+            'pi_purple':[(127,0,255),False,{},{},[]],
+            'pi_mBlue':[(0,127,255),False,{},{},[]],
+            'pi_lilac':[(127,127,255),False,{},{},[]],
+            'pi_blueS':[(127,255,255),False,{},{},[]],
+            'pi_pearl':[(255,127,255),False,{},{},[]],
+            'pi_beige':[(255,255,127),False,{},{},[]],
+            
+            #empty space
+            0:[(105, 105, 105),False,{},{},[]]
+            
+        } #{piece:[code, can be moved, {pigment:mix}, {photon:mix}, [splits]]}
 
 nodes = {
         0:[2,3,5], 1:[2,4,6], 
@@ -33,16 +61,16 @@ coords = [(250, 100),(550, 100),
               (400, 480),
               (250, 560),(550, 560)] #to draw board
 
-def check_can_photon_split(state, to_check):
-    if photon[state[0][to_check]] in photon:
-        return photon[state[0][to_check]] == []
+def check_can_piece_split(state, to_check):
+    if piece[state[0][to_check]] in piece:
+        return piece[state[0][to_check]] == []
     return 1
 
 def check_empty(state, to_check):
     return state[0][to_check] == 0
 
 def check_can_merge(state, fr, to): #can merge color
-    return state[0][to] in photon[state[0][fr]][2]
+    return state[0][to] in piece[state[0][fr]][3]
 
 def check_can_move(state, fr, to): #can move to space (empty and connected)
     return not(to in nodes[fr])
@@ -50,8 +78,8 @@ def check_can_move(state, fr, to): #can move to space (empty and connected)
 def check_win(state):
     return state[0] == state[3]
 
-def split(state, photon):
-    if check_can_photon_split(state, photon):
+def split(state, piece):
+    if check_can_piece_split(state, piece):
         return 1
     return 0
         
@@ -62,22 +90,19 @@ def move(state, fr, to):
         state[0][to] = state[0][fr]
         state[0][fr] = 0
     elif check_can_merge(state, fr, to):
-        state[0][to] = photon[state[0][to]][2][state[0][fr]]
+        state[0][to] = piece[state[0][to]][3][state[0][fr]]
         state[0][fr] = 0
     state[2] -= 1
     return state
 
-def draw_photon(p_draw, screen, coord):
-    if p_draw in photon:
-        pygame.draw.circle(screen, photon[p_draw][0], coord, 20)
-    else:
-        pygame.draw.circle(screen, (105, 105, 105), coord, 20)
+def draw_piece(p_draw, screen, coord):
+    pygame.draw.circle(screen, piece[p_draw][0], coord, 20)
 
 def draw_board(board, screen):
     i = 0
     
     while i < len(coords):
-        draw_photon(board[i], screen, coords[i])
+        draw_piece(board[i], screen, coords[i])
         i += 1
         
 def dist_points(pos_1, pos_2):
@@ -98,30 +123,32 @@ def in_circle(to_check):
 def main():
     state = [[
               0,0,
-              'red',
-              'red',0,
-              'red','green',
-              0,0,0,'green',0,
-              'blue','green',
-              'blue',0,
-              'blue',
+              'ph_red',
+              'ph_red',0,
+              'ph_red','ph_green',
+              0,0,0,'ph_green',0,
+              'ph_blue','ph_green',
+              'ph_blue',0,
+              'ph_blue',
               0,0
              ], [0,'none'], 9,
              [
               0,0,
               0,
-              0,'yellow',
+              0,'ph_yellow',
               0,0,
-              0,'purple','white',0,0,
+              0,'ph_magenta','ph_white',0,0,
               0,0,
-              0,'cyan',
+              0,'ph_cyan',
               0,
               0,0
              ]] #board, selected (color,pos), nº remaining moves, goal
 
     pygame.init()
 
-    moves = []
+    #moves = []
+    
+    font = pygame.font.Font(None, 36)
 
     screen_width = 800
     screen_height = 800
@@ -133,6 +160,8 @@ def main():
     
     while run:
         
+        screen.fill((0, 0, 0))
+        
         l = 40
         
         if(check_win(state)):
@@ -141,33 +170,38 @@ def main():
             continue
         
         draw_board(state[0], screen)
+        
+        text_surface = font.render("Moves: " + str(state[2]), True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(60, 20))
+        screen.blit(text_surface, text_rect)
 
-        draw_photon(state[1][0], screen, [100,700])
+        draw_piece(state[1][0], screen, [100,700])
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             
+            '''
             if event.type == pygame.KEYDOWN:
-                print(event.key)
                 if event.key == pygame.K_ESCAPE and len(moves) > 0:
-                    state = moves[0]
+                    state[0] = moves[0].copy()
                     moves.pop()
+            '''
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if(pygame.mouse.get_pressed()[0]):
                     chosen_space = in_circle(pygame.mouse.get_pos())
                     
                     if chosen_space != -1:
-                        moves.append(state)
                         if state[1][0] != 0:
+                            #moves.append(state[0])
                             state = move(state, state[1][1], chosen_space)
-                            state[1][0] = 0
-                            state[1][1] = 'none'
-                            print(state[2])
-                        else:
-                            state[1][0] = state[0][chosen_space]
-                            state[1][1] = chosen_space
+                            state[1] = [0, 'none'] 
+                        elif piece[state[0][chosen_space]][1]:
+                            state[1] = [state[0][chosen_space], chosen_space]
+                            
+                if(pygame.mouse.get_pressed()[2]):
+                    state[1] = [0, 'none'] 
             
             
         pygame.display.update()
