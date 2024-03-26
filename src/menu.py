@@ -1,11 +1,22 @@
-import pygame, sys
+from math import sqrt
+import pygame, sys, drop, copy
 
 pygame.init()
 
 SCREEN = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Drop of Light")
 
+coords = [(250, 100),(550, 100),
+              (400, 160),
+              (325, 200),(475, 200),
+              (250, 240),(550, 240),
+              (100, 320),(250, 320),(400, 320),(550, 320),(700, 320),
+              (250, 400),(550, 400),
+              (325, 440),(475, 440),
+              (400, 480),
+              (250, 560),(550, 560)] #to draw board
 
+pieces = []
 
 def initialize_screen():
     pygame.init()
@@ -22,6 +33,9 @@ def display_text(screen, text, size, color, position):
 
 def create_button(pos, text, font_size, base_color, hovering_color):
     return Button(pos=pos, text_input=text, font=get_font(font_size), base_color=base_color, hovering_color=hovering_color)
+
+def create_piece(coord, color, pos):
+    return Piece(coord=coord, color=color, pos=pos)
 
 class Button:
     def __init__(self, pos, text_input, font, base_color, hovering_color):
@@ -44,6 +58,59 @@ class Button:
 
     def checkForInput(self, mouse_pos):
         return self.rect.collidepoint(mouse_pos)
+
+class Piece:
+    def __init__(self, coord, color, pos):
+        self.coord = coord
+        self.color = color
+        self.pos = pos
+        self.rect = None
+
+    def update(self, screen):
+        if self.color in drop.piece:
+            pygame.draw.circle(screen, drop.piece[self.color][0], self.coord, 20)
+        else:
+            pygame.draw.circle(screen, drop.piece[0][0], self.coord, 20)
+
+    def checkForInput(self, mouse_pos):
+        return dist_points(self.coord, mouse_pos) < 20
+    
+    def set_color(self, color):
+        self.color = color
+        
+    def get_pos(self):
+        return self.pos
+
+def dist_points(pos_1, pos_2):
+    return sqrt((pos_1[0] - pos_2[0])**2+(pos_1[1] - pos_2[1])**2)
+   
+def make_board(board):
+    i = 0
+    for i in range(len(coords)):
+        pieces.append(create_piece(coords[i], board[i], i))
+        i += 1
+        
+def draw_board(board, screen):
+    pygame.draw.line(screen, (100, 100, 100), coords[0], coords[11], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[0], coords[18], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[0], coords[17], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[1], coords[7], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[1], coords[17], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[1], coords[18], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[7], coords[11], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[7], coords[18], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[11], coords[17], 5)
+    
+    for piece in pieces:
+        piece.set_color(board[piece.get_pos()]) 
+        piece.update(screen)
+        
+def in_piece(mouse_pos):
+    i = 0
+    for i in range(len(pieces)):
+        if pieces[i].checkForInput(mouse_pos):
+            return i
+    return -1
 
 def main_menu():
     screen = initialize_screen()
@@ -69,7 +136,9 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if play_button.checkForInput(mouse_pos):
-                    play()
+                    teste = copy.deepcopy(drop.LEVELS[1])
+                    print(drop.LEVELS[1])
+                    play(teste)
                 elif options_button.checkForInput(mouse_pos):
                     options()
                 elif quit_button.checkForInput(mouse_pos):
@@ -78,21 +147,37 @@ def main_menu():
 
         pygame.display.update()
 
-def play():
+def play(state):
     screen = initialize_screen()
 
-    while True:
+    run = True
+    font = pygame.font.Font(None, 36)
+    
+    make_board(state[0])
+
+    while run:
         screen.fill((0 ,0 ,0))
         
-        display_text(screen ,"THIS IS THE PLAY SCREEN" ,40 ,(255 ,255 ,255) ,(640 ,260))
+        if(drop.check_win(state)):
+            run = False
+            print('you win!!')
+            continue
+        
+        if(state[2] <= 0):
+            run = False
+            print('out of moves')
+            continue
+        
+        draw_board(state[0], screen)
+        
+        text_surface = font.render("Moves: " + str(state[2]), True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(60, 20))
+        screen.blit(text_surface, text_rect)
 
-        back_button = create_button((640 ,460) ,"BACK" ,50 ,(255 ,255 ,255) ,(100 ,100 ,100))
-        
-        back_button.rect = pygame.Rect(back_button.pos[0] - 75 ,back_button.pos[1] - 25 ,150 ,50)
-        
-        back_button.changeColor(pygame.mouse.get_pos())
-        
-        back_button.update(screen)
+        if state[1][0] in drop.piece:
+            pygame.draw.circle(screen, drop.piece[state[1][0]][0], (80,100), 20)
+        else:
+            pygame.draw.circle(screen, drop.piece[0][0], (80,100), 20)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -100,8 +185,24 @@ def play():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if back_button.checkForInput(mouse_pos):
-                    main_menu()
+                    
+                if(pygame.mouse.get_pressed()[0]):
+                    chosen_space = in_piece(mouse_pos)
+                    
+                    if chosen_space != -1:
+                        if state[1][0] != 0 and state[1][0] in drop.piece:
+                            state = drop.move(state, chosen_space)
+                        elif drop.piece[state[0][chosen_space]][1]:
+                            state[1] = [state[0][chosen_space], chosen_space]
+                            state[0][chosen_space] = 0
+                            
+                if(pygame.mouse.get_pressed()[2]):
+                    chosen_space = in_piece(mouse_pos)
+                    if state[1][0] == -1 and chosen_space != -1:
+                        state = drop.split(state, chosen_space)
+                    else:
+                        state[0][state[1][1]] = state[1][0]
+                        state[1] = [-1, 'none']
 
         pygame.display.update()
 
