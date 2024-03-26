@@ -1,6 +1,129 @@
 from math import sqrt
 import pygame
 
+#board, selected, nº remaining moves, goal
+
+LEVELS = {
+    1:[[
+              0,0,
+              'ph_red',
+              'ph_red',0,
+              'ph_red','ph_green',
+              0,0,0,'ph_green',0,
+              'ph_blue','ph_green',
+              'ph_blue',0,
+              'ph_blue',
+              0,0
+             ], [-1,'none'], 9,
+             [
+              0,0,
+              0,
+              0,'ph_yellow',
+              0,0,
+              0,'ph_magenta','ph_white',0,0,
+              0,0,
+              0,'ph_cyan',
+              0,
+              0,0
+             ]],
+    2:[
+        [   
+            0,0,
+            0,
+            0,0,
+            0,0,
+            0,0,'white',0,0,
+            0,0,
+            'green',0,
+            'white',
+            'blue',0
+            ], 0, 13,
+            [
+            0,0,
+            0,
+            0,0,
+            0,0,
+            0,0,'white',0,0,
+            0,0,
+            'white',0,
+            'green',
+            0,'blue'
+            ]
+    ],
+    3:[
+        [   
+            'yellow','white',
+            'green',
+            'green','white',
+            'green','blue',
+            'white','white',0,'blue','cyan',
+            'red','blue',
+            'red','white',
+            'red',
+            'purple','white'
+            ], 0, 16,
+            [
+            'cyan','white',
+            'green',
+            'green','white',
+            'green','blue',
+            'white','white',0,'blue','purple',
+            'red','blue',
+            'red','white',
+            'red',
+            'yellow','white'
+            ]
+    ],
+    4:[
+        [   
+            'white','white',
+            0,
+            0,0,
+            0,0,
+            0,0,'yellow',0,0,
+            0,0,
+            'yellow','yellow',
+            0,
+            'yellow','yellow'
+            ], 0, 18,
+            [
+            'yellow','yellow',
+            0,
+            'yellow','yellow',
+            0,0,
+            0,0,'yellow',0,0,
+            0,0,
+            0,0,
+            0,
+            'white','white'
+            ]
+    ],
+    5:[
+        [   
+            0,0,
+            0,
+            0,0,
+            0,0,
+            'purple',0,0,0,'yellow',
+            0,0,
+            0,0,
+            0,
+            0,0
+            ], 0, 6,
+            [
+            0,0,
+            0,
+            0,'red',
+            0,0,
+            0,0,'white',0,0,
+            0,0,
+            0,0,
+            0,
+            0,0
+            ]
+    ]
+}
+
 piece = {
             #photons
             'ph_red':[(127,0,0),True, {'ph_green':'ph_yellow', 'ph_blue':'ph_magenta', 'ph_cyan':'ph_white', 'pi_green':'pi_lime', 'pi_blue':'pi_purple', 'pi_cyan':'pi_blueS'}, 0],
@@ -51,16 +174,6 @@ nodes = {
         17:[12,14,16,17], 18:[13,15,16,18]
         } #node1 -> node2, node2 -> node1
 
-coords = [(250, 100),(550, 100),
-              (400, 160),
-              (325, 200),(475, 200),
-              (250, 240),(550, 240),
-              (100, 320),(250, 320),(400, 320),(550, 320),(700, 320),
-              (250, 400),(550, 400),
-              (325, 440),(475, 440),
-              (400, 480),
-              (250, 560),(550, 560)] #to draw board
-
 def check_can_piece_split(state, to_check):
     return piece[state[0][to_check]][3] == 0
 
@@ -99,127 +212,4 @@ def move(state, to):
         state[2] -= 1
     state[1] = [-1, 'none']
     
-    return state
-
-def draw_piece(p_draw, screen, coord):
-    if p_draw in piece:
-        pygame.draw.circle(screen, piece[p_draw][0], coord, 20)
-    else:
-        pygame.draw.circle(screen, piece[0][0], coord, 20)
-
-def draw_board(board, screen):
-    i = 0
-    
-    while i < len(coords):
-        draw_piece(board[i], screen, coords[i])
-        i += 1
-        
-def dist_points(pos_1, pos_2):
-    return sqrt((pos_1[0] - pos_2[0])**2+(pos_1[1] - pos_2[1])**2)
-         
-
-def in_circle(to_check):
-    i = 0
-    
-    while i < len(coords):
-        if dist_points(coords[i], to_check) < 20:
-            return i
-        i += 1
-    
-    return -1
-        
-
-def main():
-    state = [[
-              0,0,
-              'ph_red',
-              'ph_red',0,
-              'ph_red','ph_green',
-              0,0,0,'ph_green',0,
-              'ph_blue','ph_green',
-              'ph_blue',0,
-              'ph_blue',
-              0,0
-             ], [-1,'none'], 9,
-             [
-              0,0,
-              0,
-              0,'ph_yellow',
-              0,0,
-              0,'ph_magenta','ph_white',0,0,
-              0,0,
-              0,'ph_cyan',
-              0,
-              0,0
-             ]] #board, selected (color,pos), nº remaining moves, goal
-
-    pygame.init()
-
-    #moves = []
-    
-    font = pygame.font.Font(None, 36)
-
-    screen_width = 800
-    screen_height = 800
-    
-    screen = pygame.display.set_mode((screen_width, screen_height))
-    
-    run = True
-    selected = False
-    
-    while run:
-        
-        screen.fill((0, 0, 0))
-        
-        l = 40
-        
-        if(check_win(state)):
-            run = False
-            print('you win!!')
-            continue
-        
-        draw_board(state[0], screen)
-        
-        text_surface = font.render("Moves: " + str(state[2]), True, (255, 255, 255))
-        text_rect = text_surface.get_rect(center=(60, 20))
-        screen.blit(text_surface, text_rect)
-
-        draw_piece(state[1][0], screen, [100,700])
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            
-            '''
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE and len(moves) > 0:
-                    state[0] = moves[0].copy()
-                    moves.pop()
-            '''
-                
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if(pygame.mouse.get_pressed()[0]):
-                    chosen_space = in_circle(pygame.mouse.get_pos())
-                    
-                    if chosen_space != -1:
-                        if state[1][0] != 0 and state[1][0] in piece:
-                            #moves.append(state[0])
-                            state = move(state, chosen_space)
-                        elif piece[state[0][chosen_space]][1]:
-                            state[1] = [state[0][chosen_space], chosen_space]
-                            state[0][chosen_space] = 0
-                            
-                if(pygame.mouse.get_pressed()[2]):
-                    chosen_space = in_circle(pygame.mouse.get_pos())
-                    if state[1][0] == -1 and chosen_space != -1:
-                        state = split(state, chosen_space)
-                    else:
-                        state[0][state[1][1]] = state[1][0]
-                        state[1] = [-1, 'none'] 
-            
-        pygame.display.update()
-    
-    return 0
-
-if __name__ == "__main__":
-    main()
+    return state  
