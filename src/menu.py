@@ -91,6 +91,16 @@ def make_board(board):
         i += 1
         
 def draw_board(board, screen):
+    pygame.draw.line(screen, (100, 100, 100), coords[0], coords[11], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[0], coords[18], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[0], coords[17], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[1], coords[7], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[1], coords[17], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[1], coords[18], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[7], coords[11], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[7], coords[18], 5)
+    pygame.draw.line(screen, (100, 100, 100), coords[11], coords[17], 5)
+    
     for piece in pieces:
         piece.set_color(board[piece.get_pos()]) 
         piece.update(screen)
@@ -153,13 +163,21 @@ def play(state):
             print('you win!!')
             continue
         
+        if(state[2] <= 0):
+            run = False
+            print('out of moves')
+            continue
+        
         draw_board(state[0], screen)
         
         text_surface = font.render("Moves: " + str(state[2]), True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(60, 20))
         screen.blit(text_surface, text_rect)
 
-        #drop.draw_piece(state[1][0], screen, [100,700])
+        if state[1][0] in drop.piece:
+            pygame.draw.circle(screen, drop.piece[state[1][0]][0], (80,100), 20)
+        else:
+            pygame.draw.circle(screen, drop.piece[0][0], (80,100), 20)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
