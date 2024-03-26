@@ -3,52 +3,52 @@ import pygame
 
 piece = {
             #photons
-            'ph_red':[(127,0,0),True,{'ph_green':'moreph_green', 'ph_blue':'ph_magenta', 'ph_cyan':'ph_cyan'}, {'ph_green':'ph_yellow', 'ph_blue':'ph_magenta', 'ph_cyan':'ph_white'}, []],
-            'ph_blue':[(0,0,127),True,{'ph_red':'ph_magenta', 'ph_green':'aqua_ph_green', 'ph_yellow':'light_ph_yellow'}, {'ph_green':'ph_cyan', 'ph_red':'ph_magenta', 'ph_yellow':'ph_white'}, []],
-            'ph_green':[(0,127,0),True,{'ph_red':'orange', 'ph_blue':'ph_blue_sky', 'ph_magenta':'pink'}, {'ph_red':'ph_yellow', 'ph_blue':'ph_cyan', 'ph_magenta':'ph_white'}, []],
-            'ph_cyan':[(0,127,127),True,{'ph_red':'beige'},{'ph_red':'ph_white'},['ph_blue', 'ph_green']],
-            'ph_yellow':[(127,127,0),True,{'ph_blue':'light_ph_blue'},{'ph_blue':'ph_white'},['ph_red', 'ph_green']],
-            'ph_magenta':[(127,0,127),True,{'ph_green':'light_ph_green'},{'ph_green':'ph_white'},['ph_red', 'ph_blue']],
-            'ph_white':[(127,127,127),True,{}, {}, ['ph_red', 'ph_green', 'ph_blue']],
+            'ph_red':[(127,0,0),True, {'ph_green':'ph_yellow', 'ph_blue':'ph_magenta', 'ph_cyan':'ph_white', 'pi_green':'pi_lime', 'pi_blue':'pi_purple', 'pi_cyan':'pi_blueS'}, 0],
+            'ph_blue':[(0,0,127),True, {'ph_green':'ph_cyan', 'ph_red':'ph_magenta', 'ph_yellow':'ph_white', 'pi_red':'pi_violet', 'pi_green':'pi_mint', 'pi_yellow':'pi_beige'}, 0],
+            'ph_green':[(0,127,0),True, {'ph_red':'ph_yellow', 'ph_blue':'ph_cyan', 'ph_magenta':'ph_white', 'pi_red':'pi_orange', 'pi_blue':'pi_mBlue', 'pi_magenta':'pi_pearl'}, 0],
+            'ph_cyan':[(0,127,127),True, {'ph_red':'ph_white', 'pi_red':'pi_pink'},('ph_blue', 'ph_green')],
+            'ph_yellow':[(127,127,0),True, {'ph_blue':'ph_white', 'pi_blue':'pi_lilac'},('ph_red', 'ph_green')],
+            'ph_magenta':[(127,0,127),True, {'ph_green':'ph_white', 'pi_green':'pi_pistachio'},('ph_red', 'ph_blue')],
+            'ph_white':[(240,240,240),True, {}, ('ph_red', 'ph_cyan')],
             
             #elemental pigments
-            'pi_red':[(255,0,0),False,{},{},[]],
-            'pi_blue':[(0,0,255),False,{},{},[]],
-            'pi_green':[(0,255,0),False,{},{},[]],
-            'pi_cyan':[(0,255,255),False,{},{},[]],
-            'pi_yellow':[(255,255,0),False,{},{},[]],
-            'pi_magenta':[(255,0,255),False,{},{},[]],
-            'pi_white':[(255,255,255),False,{},{},[]],
+            'pi_red':[(255,0,0),False,{},0],
+            'pi_blue':[(0,0,255),False,{},0],
+            'pi_green':[(0,255,0),False,{},0],
+            'pi_cyan':[(0,255,255),False,{},0],
+            'pi_yellow':[(255,255,0),False,{},0],
+            'pi_magenta':[(255,0,255),False,{},0],
+            'pi_white':[(255,255,255),False,{},0],
             
             #mix pigments
-            'pi_orange':[(255,127,0),False,{},{},[]],
-            'pi_violet':[(255,0,127),False,{},{},[]],
-            'pi_pink':[(255,127,127),False,{},{},[]],
-            'pi_lime':[(127,255,0),False,{},{},[]],
-            'pi_mint':[(0,255,127),False,{},{},[]],
-            'pi_pistachio':[(127,255,127),False,{},{},[]],
-            'pi_purple':[(127,0,255),False,{},{},[]],
-            'pi_mBlue':[(0,127,255),False,{},{},[]],
-            'pi_lilac':[(127,127,255),False,{},{},[]],
-            'pi_blueS':[(127,255,255),False,{},{},[]],
-            'pi_pearl':[(255,127,255),False,{},{},[]],
-            'pi_beige':[(255,255,127),False,{},{},[]],
+            'pi_orange':[(255,127,0),False,{},('ph_green', 'pi_red')],
+            'pi_violet':[(255,0,127),False,{},('ph_blue', 'pi_red')],
+            'pi_pink':[(255,127,127),False,{},('ph_cyan', 'pi_red')],
+            'pi_lime':[(127,255,0),False,{},('ph_red', 'pi_green')],
+            'pi_mint':[(0,255,127),False,{},('ph_blue', 'pi_green')],
+            'pi_pistachio':[(127,255,127),False,{},('ph_violet', 'pi_green')],
+            'pi_purple':[(127,0,255),False,{},('ph_red', 'pi_blue')],
+            'pi_mBlue':[(0,127,255),False,{},('ph_green', 'pi_blue')],
+            'pi_lilac':[(127,127,255),False,{},('ph_yellow', 'pi_blue')],
+            'pi_blueS':[(127,255,255),False,{},('ph_red', 'pi_cyan')],
+            'pi_pearl':[(255,127,255),False,{},('ph_green', 'pi_violet')],
+            'pi_beige':[(255,255,127),False,{},('ph_blue', 'pi_yellow')],
             
             #empty space
-            0:[(105, 105, 105),False,{},{},[]]
+            0:[(105, 105, 105),False,{},0]
             
-        } #{piece:[code, can be moved, {pigment:mix}, {photon:mix}, [splits]]} to change splits -> (selects, leaves behind)
+        } #{piece:[code, can be moved, {photon:mix}, [splits]]} to change splits -> (selects, leaves behind)
 
 nodes = {
-        0:[2,3,5], 1:[2,4,6], 
+        0:[0,2,3,5], 1:[1,2,4,6], 
         2:[1,2,4,5], 
-        3:[0,2,5,9], 4:[1,2,6,9], 
-        5:[0,3,7,8], 6:[1,4,10,11], 
-        7:[5,8,12], 8:[5,7,9,12], 9:[3,4,8,10,14,15], 10:[6,9,11,13], 11:[6,10,13],
-        12:[7,8,9,14,17], 13:[10,11,15,18],
-        14:[9,12,16,17], 15:[9,13,16,18],
-        16:[14,15,17,18],
-        17:[12,14,16], 18:[13,15,16]
+        3:[0,2,3,5,9], 4:[1,2,4,6,9], 
+        5:[0,3,5,7,8], 6:[1,4,6,10,11], 
+        7:[5,7,8,12], 8:[5,7,8,9,12], 9:[3,4,8,8,10,14,15], 10:[6,9,10,11,13], 11:[6,10,11,13],
+        12:[7,8,12,14,17], 13:[10,11,13,15,18],
+        14:[9,12,14,16,17], 15:[9,13,15,16,18],
+        16:[14,15,16,17,18],
+        17:[12,14,16,17], 18:[13,15,16,18]
         } #node1 -> node2, node2 -> node1
 
 coords = [(250, 100),(550, 100),
@@ -62,41 +62,50 @@ coords = [(250, 100),(550, 100),
               (250, 560),(550, 560)] #to draw board
 
 def check_can_piece_split(state, to_check):
-    if piece[state[0][to_check]] in piece:
-        return piece[state[0][to_check]] == []
-    return 1
+    return piece[state[0][to_check]][3] == 0
 
 def check_empty(state, to_check):
     return state[0][to_check] == 0
 
-def check_can_merge(state, fr, to): #can merge color
-    return state[0][to] in piece[state[0][fr]][3]
+def check_can_merge(state, to): #can merge color
+    return state[0][to] in piece[state[1][0]][2]
 
-def check_can_move(state, fr, to): #can move to space (empty and connected)
-    return not(to in nodes[fr])
+def check_can_move(state, to): #can move to space (empty and connected)
+    return not(to in nodes[state[1][1]])
 
 def check_win(state):
     return state[0] == state[3]
 
-def split(state, piece):
-    if check_can_piece_split(state, piece):
-        return 1
-    return 0
+def split(state, pos):
+    if check_can_piece_split(state, pos):
+        return state
+    
+    state[1] = [piece[state[0][pos]][3][0], pos]
+    state[0][pos] = piece[state[0][pos]][3][1]
+    
+    return state
         
-def move(state, fr, to):
-    if check_can_move(state, fr, to):
+def move(state, to):
+    if check_can_move(state, to):
         return state
     elif check_empty(state, to):
-        state[0][to] = state[0][fr]
-        state[0][fr] = 0
-    elif check_can_merge(state, fr, to):
-        state[0][to] = piece[state[0][to]][3][state[0][fr]]
-        state[0][fr] = 0
-    state[2] -= 1
+        state[0][to] = state[1][0]
+    elif check_can_merge(state, to):
+        state[0][to] = piece[state[1][0]][2][state[0][to]]
+    else:
+        return state
+    
+    if state[1][1] != to:
+        state[2] -= 1
+    state[1] = [-1, 'none']
+    
     return state
 
 def draw_piece(p_draw, screen, coord):
-    pygame.draw.circle(screen, piece[p_draw][0], coord, 20)
+    if p_draw in piece:
+        pygame.draw.circle(screen, piece[p_draw][0], coord, 20)
+    else:
+        pygame.draw.circle(screen, piece[0][0], coord, 20)
 
 def draw_board(board, screen):
     i = 0
@@ -131,7 +140,7 @@ def main():
               'ph_blue',0,
               'ph_blue',
               0,0
-             ], [0,'none'], 9,
+             ], [-1,'none'], 9,
              [
               0,0,
               0,
@@ -193,16 +202,20 @@ def main():
                     chosen_space = in_circle(pygame.mouse.get_pos())
                     
                     if chosen_space != -1:
-                        if state[1][0] != 0:
+                        if state[1][0] != 0 and state[1][0] in piece:
                             #moves.append(state[0])
-                            state = move(state, state[1][1], chosen_space)
-                            state[1] = [0, 'none'] 
+                            state = move(state, chosen_space)
                         elif piece[state[0][chosen_space]][1]:
                             state[1] = [state[0][chosen_space], chosen_space]
+                            state[0][chosen_space] = 0
                             
                 if(pygame.mouse.get_pressed()[2]):
-                    state[1] = [0, 'none'] 
-            
+                    chosen_space = in_circle(pygame.mouse.get_pos())
+                    if state[1][0] == -1 and chosen_space != -1:
+                        state = split(state, chosen_space)
+                    else:
+                        state[0][state[1][1]] = state[1][0]
+                        state[1] = [-1, 'none'] 
             
         pygame.display.update()
     
