@@ -212,22 +212,58 @@ def choose_level():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if level_1.checkForInput(mouse_pos):
-                    teste = copy.deepcopy(drop.LEVELS[1])
-                    play(teste)
+                    play_loop(1)
                 if level_2.checkForInput(mouse_pos):
-                    teste = copy.deepcopy(drop.LEVELS[2])
-                    play(teste)
+                    play_loop(2)
                 if level_3.checkForInput(mouse_pos):
-                    teste = copy.deepcopy(drop.LEVELS[3])
-                    play(teste)
+                    play_loop(3)
                 if level_4.checkForInput(mouse_pos):
-                    teste = copy.deepcopy(drop.LEVELS[4])
-                    play(teste)
+                    play_loop(4)
                 elif back_button.checkForInput(mouse_pos):
                     loop = False
 
-        pygame.display.update()
+        pygame.display.update() 
+
+def play_loop(selected):
+    loop = True
+    while loop:
+        level = copy.deepcopy(drop.LEVELS[selected])
+        loop = state_screen(play(level))
+            
+def state_screen(win):
+    screen = initialize_screen()
+    retry_button = 0
     
+    while True:
+        screen.fill((0, 0, 0))
+
+        if win:
+            display_text(screen, "YOU WIN!!", 60, (139, 0, 39), (640, 100))
+            retry_button = 0
+        else:
+            display_text(screen, "NO ENERGY LEFT", 60, (139, 0, 39), (640, 100))
+            retry_button = create_button((640 ,400), "TRY AGAIN", 40,(200 ,200 ,200), (100 ,100 ,100))
+            
+        quit_button = create_button((640 ,550), "LEVEL SELECT", 40,(200 ,200 ,200), (100 ,100 ,100))
+
+        for button in [retry_button, quit_button]:
+            if button != 0:
+                button.rect = pygame.Rect(button.pos[0] - 180 ,button.pos[1] - 40 ,360 ,80)
+                button.changeColor(pygame.mouse.get_pos())
+                button.update(screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if retry_button != 0 and retry_button.checkForInput(mouse_pos):
+                    return True
+                elif quit_button.checkForInput(mouse_pos):
+                    return False
+
+        pygame.display.update()
 
 def play(state):
     screen = initialize_screen()
@@ -242,14 +278,10 @@ def play(state):
         screen.fill((0 ,0 ,0))
         
         if(drop.check_win(state)):
-            run = False
-            print('you win!!')
-            continue
+            return 1
         
         if(state[2] <= 0):
-            run = False
-            print('out of moves')
-            continue
+            return 0
         
         draw_board(state[0], screen)
         draw_goal(state[3], screen)
