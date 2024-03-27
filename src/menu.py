@@ -19,7 +19,18 @@ coords = [(490, 100),(790, 100),
               (640, 533),
           (490, 620),(790, 620)] #to draw board
 
+coords_goal = [(950, 63),(1050, 63),
+                (1000, 92),
+               (975, 106.5),(1025, 106.5),
+               (950, 121),(1050, 121),
+               (900, 150),(950, 150),(1000, 150),(1050, 150),(1100, 150),
+               (950, 179),(1050, 179),
+               (975, 193.5),(1025, 193.5),
+                (1000, 208),
+               (950, 237),(1050, 237)] #to draw goal
+
 pieces = []
+goals = []
 
 def initialize_screen():
     pygame.init()
@@ -37,8 +48,8 @@ def display_text(screen, text, size, color, position):
 def create_button(pos, text, font_size, base_color, hovering_color):
     return Button(pos=pos, text_input=text, font=get_font(font_size), base_color=base_color, hovering_color=hovering_color)
 
-def create_piece(coord, color, pos):
-    return Piece(coord=coord, color=color, pos=pos)
+def create_piece(coord, color, pos, size):
+    return Piece(coord=coord, color=color, pos=pos, size=size)
 
 class Button:
     def __init__(self, pos, text_input, font, base_color, hovering_color):
@@ -63,17 +74,18 @@ class Button:
         return self.rect.collidepoint(mouse_pos)
 
 class Piece:
-    def __init__(self, coord, color, pos):
+    def __init__(self, coord, color, pos, size):
         self.coord = coord
         self.color = color
         self.pos = pos
+        self.size = size
         self.rect = None
 
     def update(self, screen):
         if self.color in drop.piece:
-            pygame.draw.circle(screen, drop.piece[self.color][0], self.coord, 20)
+            pygame.draw.circle(screen, drop.piece[self.color][0], self.coord, self.size)
         else:
-            pygame.draw.circle(screen, drop.piece[0][0], self.coord, 20)
+            pygame.draw.circle(screen, drop.piece[0][0], self.coord, self.size)
 
     def checkForInput(self, mouse_pos):
         return dist_points(self.coord, mouse_pos) < 20
@@ -87,10 +99,21 @@ class Piece:
 def dist_points(pos_1, pos_2):
     return sqrt((pos_1[0] - pos_2[0])**2+(pos_1[1] - pos_2[1])**2)
    
-def make_board(board):
+def make_board(board, goal): #goal=True -> create goal
+    i = 0
+    if goal:
+        for i in range(len(coords_goal)):
+            goals.append(create_piece(coords_goal[i], board[i], i, 5))
+            i += 1
+    else:
+        for i in range(len(coords)):
+            pieces.append(create_piece(coords[i], board[i], i, 20))
+            i += 1
+        
+def make_goal(goal):
     i = 0
     for i in range(len(coords)):
-        pieces.append(create_piece(coords[i], board[i], i))
+        pieces.append(create_piece(coords[i], goal[i], i, 5))
         i += 1
         
 def draw_board(board, screen):
@@ -106,6 +129,20 @@ def draw_board(board, screen):
     
     for piece in pieces:
         piece.set_color(board[piece.get_pos()]) 
+        piece.update(screen)
+        
+def draw_goal(board, screen):
+    pygame.draw.line(screen, (100, 100, 100), coords_goal[0], coords_goal[11], 2)
+    pygame.draw.line(screen, (100, 100, 100), coords_goal[0], coords_goal[18], 2)
+    pygame.draw.line(screen, (100, 100, 100), coords_goal[0], coords_goal[17], 2)
+    pygame.draw.line(screen, (100, 100, 100), coords_goal[1], coords_goal[7], 2)
+    pygame.draw.line(screen, (100, 100, 100), coords_goal[1], coords_goal[17], 2)
+    pygame.draw.line(screen, (100, 100, 100), coords_goal[1], coords_goal[18], 2)
+    pygame.draw.line(screen, (100, 100, 100), coords_goal[7], coords_goal[11], 2)
+    pygame.draw.line(screen, (100, 100, 100), coords_goal[7], coords_goal[18], 2)
+    pygame.draw.line(screen, (100, 100, 100), coords_goal[11], coords_goal[17], 2)
+    
+    for piece in goals:
         piece.update(screen)
         
 def in_piece(mouse_pos):
@@ -198,7 +235,8 @@ def play(state):
     run = True
     font = pygame.font.Font(None, 36)
     
-    make_board(state[0])
+    make_board(state[0],False)
+    make_board(state[3],True)
 
     while run:
         screen.fill((0 ,0 ,0))
@@ -214,6 +252,7 @@ def play(state):
             continue
         
         draw_board(state[0], screen)
+        draw_goal(state[3], screen)
         
         text_surface = font.render("Moves: " + str(state[2]), True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(60, 20))
