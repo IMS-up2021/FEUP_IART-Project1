@@ -3,24 +3,27 @@ import pygame, sys, drop, copy
 
 pygame.init()
 
-SCREEN = pygame.display.set_mode((1280, 720))
+screen_x = 1280
+screen_y = 720
+
+SCREEN = pygame.display.set_mode((screen_x, screen_y))
 pygame.display.set_caption("Drop of Light")
 
-coords = [(250, 100),(550, 100),
-              (400, 160),
-              (325, 200),(475, 200),
-              (250, 240),(550, 240),
-              (100, 320),(250, 320),(400, 320),(550, 320),(700, 320),
-              (250, 400),(550, 400),
-              (325, 440),(475, 440),
-              (400, 480),
-              (250, 560),(550, 560)] #to draw board
+coords = [(490, 100),(790, 100),
+              (640, 187),
+          (565, 230),(715, 230),
+          (490, 273),(790, 273),
+          (340, 360),(490, 360),(640, 360),(790, 360),(940, 360),
+          (490, 447),(790, 447),
+          (565, 490),(715, 490),
+              (640, 533),
+          (490, 620),(790, 620)] #to draw board
 
 pieces = []
 
 def initialize_screen():
     pygame.init()
-    return pygame.display.set_mode((1280, 720))
+    return pygame.display.set_mode((screen_x, screen_y))
 
 def get_font(size):
     return pygame.font.Font("assets_menu/font.ttf", size)
@@ -136,9 +139,7 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if play_button.checkForInput(mouse_pos):
-                    teste = copy.deepcopy(drop.LEVELS[1])
-                    print(drop.LEVELS[1])
-                    play(teste)
+                    choose_level()
                 elif options_button.checkForInput(mouse_pos):
                     options()
                 elif quit_button.checkForInput(mouse_pos):
@@ -146,6 +147,43 @@ def main_menu():
                     sys.exit()
 
         pygame.display.update()
+        
+def choose_level():
+    screen = initialize_screen()
+    level_buttons = []
+    
+    while True:
+        screen.fill((0, 0, 0))
+
+        display_text(screen, "LEVEL SELECT", 60, (139, 0, 39), (640, 100))
+
+        level_1 = create_button((640, 250), "1", 40, (128, 0, 32), (100 ,100 ,100))
+        level_2 = create_button((640 ,400), "2", 40,(200 ,200 ,200), (100 ,100 ,100))
+        back_button = create_button((640 ,550), "BACK", 40,(200 ,200 ,200), (100 ,100 ,100))
+
+        for button in [level_1, level_2, back_button]:
+            button.rect = pygame.Rect(button.pos[0] - 180 ,button.pos[1] - 40 ,360 ,80)
+            button.changeColor(pygame.mouse.get_pos())
+            button.update(screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if level_1.checkForInput(mouse_pos):
+                    teste = copy.deepcopy(drop.LEVELS[1])
+                    play(teste)
+                if level_2.checkForInput(mouse_pos):
+                    teste = copy.deepcopy(drop.LEVELS[2])
+                    play(teste)
+                elif back_button.checkForInput(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
+
+        pygame.display.update()
+    
 
 def play(state):
     screen = initialize_screen()
@@ -193,7 +231,7 @@ def play(state):
                         if state[1][0] != 0 and state[1][0] in drop.piece:
                             state = drop.move(state, chosen_space)
                         elif drop.piece[state[0][chosen_space]][1]:
-                            state[1] = [state[0][chosen_space], chosen_space]
+                            state[1] = [state[0][chosen_space], chosen_space, 0]
                             state[0][chosen_space] = 0
                             
                 if(pygame.mouse.get_pressed()[2]):
@@ -202,7 +240,7 @@ def play(state):
                         state = drop.split(state, chosen_space)
                     else:
                         state[0][state[1][1]] = state[1][0]
-                        state[1] = [-1, 'none']
+                        state[1] = [-1, 'none', 0]
 
         pygame.display.update()
 

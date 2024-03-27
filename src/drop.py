@@ -27,28 +27,28 @@ LEVELS = {
               0,0
              ]],
     2:[
-        [   
-            0,0,
-            0,
-            0,0,
-            0,0,
-            0,0,'white',0,0,
-            0,0,
-            'green',0,
-            'white',
-            'blue',0
-            ], 0, 13,
+        [
+              0,0,
+              0,
+              0,'ph_yellow',
+              0,0,
+              0,'ph_magenta','ph_white',0,0,
+              0,0,
+              0,'ph_cyan',
+              0,
+              0,0
+             ], [-1,'none'], 15,
             [
-            0,0,
-            0,
-            0,0,
-            0,0,
-            0,0,'white',0,0,
-            0,0,
-            'white',0,
-            'green',
-            0,'blue'
-            ]
+              0,0,
+              'ph_red',
+              'ph_red',0,
+              'ph_red','ph_green',
+              0,0,0,'ph_green',0,
+              'ph_blue','ph_green',
+              'ph_blue',0,
+              'ph_blue',
+              0,0
+             ]
     ],
     3:[
         [   
@@ -129,10 +129,10 @@ piece = {
             'ph_red':[(127,0,0),True, {'ph_green':'ph_yellow', 'ph_blue':'ph_magenta', 'ph_cyan':'ph_white', 'pi_green':'pi_lime', 'pi_blue':'pi_purple', 'pi_cyan':'pi_blueS'}, 0],
             'ph_blue':[(0,0,127),True, {'ph_green':'ph_cyan', 'ph_red':'ph_magenta', 'ph_yellow':'ph_white', 'pi_red':'pi_violet', 'pi_green':'pi_mint', 'pi_yellow':'pi_beige'}, 0],
             'ph_green':[(0,127,0),True, {'ph_red':'ph_yellow', 'ph_blue':'ph_cyan', 'ph_magenta':'ph_white', 'pi_red':'pi_orange', 'pi_blue':'pi_mBlue', 'pi_magenta':'pi_pearl'}, 0],
-            'ph_cyan':[(0,127,127),True, {'ph_red':'ph_white', 'pi_red':'pi_pink'},('ph_blue', 'ph_green')],
-            'ph_yellow':[(127,127,0),True, {'ph_blue':'ph_white', 'pi_blue':'pi_lilac'},('ph_red', 'ph_green')],
-            'ph_magenta':[(127,0,127),True, {'ph_green':'ph_white', 'pi_green':'pi_pistachio'},('ph_red', 'ph_blue')],
-            'ph_white':[(240,240,240),True, {}, ('ph_red', 'ph_cyan')],
+            'ph_cyan':[(0,127,127),True, {'ph_red':'ph_white', 'pi_red':'pi_pink'},('ph_blue', 'ph_green',1)],
+            'ph_yellow':[(127,127,0),True, {'ph_blue':'ph_white', 'pi_blue':'pi_lilac'},('ph_red', 'ph_green',1)],
+            'ph_magenta':[(127,0,127),True, {'ph_green':'ph_white', 'pi_green':'pi_pistachio'},('ph_red', 'ph_blue',1)],
+            'ph_white':[(240,240,240),True, {}, ('ph_red', 'ph_cyan',2)],
             
             #elemental pigments
             'pi_red':[(255,0,0),False,{},0],
@@ -144,23 +144,23 @@ piece = {
             'pi_white':[(255,255,255),False,{},0],
             
             #mix pigments
-            'pi_orange':[(255,127,0),False,{},('ph_green', 'pi_red')],
-            'pi_violet':[(255,0,127),False,{},('ph_blue', 'pi_red')],
-            'pi_pink':[(255,127,127),False,{},('ph_cyan', 'pi_red')],
-            'pi_lime':[(127,255,0),False,{},('ph_red', 'pi_green')],
-            'pi_mint':[(0,255,127),False,{},('ph_blue', 'pi_green')],
-            'pi_pistachio':[(127,255,127),False,{},('ph_violet', 'pi_green')],
-            'pi_purple':[(127,0,255),False,{},('ph_red', 'pi_blue')],
-            'pi_mBlue':[(0,127,255),False,{},('ph_green', 'pi_blue')],
-            'pi_lilac':[(127,127,255),False,{},('ph_yellow', 'pi_blue')],
-            'pi_blueS':[(127,255,255),False,{},('ph_red', 'pi_cyan')],
-            'pi_pearl':[(255,127,255),False,{},('ph_green', 'pi_violet')],
-            'pi_beige':[(255,255,127),False,{},('ph_blue', 'pi_yellow')],
+            'pi_orange':[(255,127,0),False,{},('ph_green', 'pi_red',1)],
+            'pi_violet':[(255,0,127),False,{},('ph_blue', 'pi_red',1)],
+            'pi_pink':[(255,127,127),False,{},('ph_cyan', 'pi_red',1)],
+            'pi_lime':[(127,255,0),False,{},('ph_red', 'pi_green',1)],
+            'pi_mint':[(0,255,127),False,{},('ph_blue', 'pi_green',1)],
+            'pi_pistachio':[(127,255,127),False,{},('ph_violet', 'pi_green',1)],
+            'pi_purple':[(127,0,255),False,{},('ph_red', 'pi_blue',1)],
+            'pi_mBlue':[(0,127,255),False,{},('ph_green', 'pi_blue',1)],
+            'pi_lilac':[(127,127,255),False,{},('ph_yellow', 'pi_blue',1)],
+            'pi_blueS':[(127,255,255),False,{},('ph_red', 'pi_cyan',1)],
+            'pi_pearl':[(255,127,255),False,{},('ph_green', 'pi_violet',1)],
+            'pi_beige':[(255,255,127),False,{},('ph_blue', 'pi_yellow',1)],
             
             #empty space
             0:[(105, 105, 105),False,{},0]
             
-        } #{piece:[code, can be moved, {photon:mix}, [splits]]} to change splits -> (selects, leaves behind)
+        } #{piece:[code, can be moved, {photon:mix}, [splits]]} to change splits -> (selects, leaves behind, cost)
 
 nodes = {
         0:[0,2,3,5], 1:[1,2,4,6], 
@@ -193,7 +193,8 @@ def split(state, pos):
     if check_can_piece_split(state, pos):
         return state
     
-    state[1] = [piece[state[0][pos]][3][0], pos]
+    state[1] = [piece[state[0][pos]][3][0], pos, state[2]]
+    state[2] = state[2] - piece[state[0][pos]][3][2]
     state[0][pos] = piece[state[0][pos]][3][1]
     
     return state
