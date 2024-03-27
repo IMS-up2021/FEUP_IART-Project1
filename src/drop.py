@@ -1,6 +1,3 @@
-from math import sqrt
-import pygame
-
 #board, selected, nº remaining moves, goal
 
 LEVELS = {
@@ -48,54 +45,51 @@ LEVELS = {
               'ph_blue',0,
               'ph_blue',
               0,0
-             ]
-    ],
-    3:[
-        [   
-            'yellow','white',
-            'green',
-            'green','white',
-            'green','blue',
-            'white','white',0,'blue','cyan',
-            'red','blue',
-            'red','white',
-            'red',
-            'purple','white'
-            ], 0, 16,
-            [
-            'cyan','white',
-            'green',
-            'green','white',
-            'green','blue',
-            'white','white',0,'blue','purple',
-            'red','blue',
-            'red','white',
-            'red',
-            'yellow','white'
-            ]
-    ],
+             ]],
+    3:[[
+              0,0,
+              'pi_magenta',
+              0,0,
+              0,0,
+              'ph_white',0,'pi_cyan',0,0,
+              0,0,
+              0,0,
+              'pi_yellow',
+              0,0
+             ], [-1,'none'], 19,
+             [
+              0,0,
+              'pi_magenta',
+              0,0,
+              0,0,
+              0,0,'pi_cyan',0,'ph_white',
+              0,0,
+              0,0,
+              'pi_yellow',
+              0,0
+             ]],
     4:[
         [   
-            'white','white',
+            0,0,
             0,
             0,0,
             0,0,
-            0,0,'yellow',0,0,
+            0,0,'pi_white',0,0,
             0,0,
-            'yellow','yellow',
-            0,
-            'yellow','yellow'
-            ], 0, 18,
+            'ph_green',0,
+            'pi_white',
+            'ph_blue',0
+            ], [-1,'none'], 13,
             [
-            'yellow','yellow',
-            0,
-            'yellow','yellow',
-            0,0,
-            0,0,'yellow',0,0,
-            0,0,
             0,0,
             0,
-            'white','white'
+            0,0,
+            0,0,
+            0,0,'pi_white',0,0,
+            0,0,
+            0,'ph_green',
+            'pi_white',
+            0,'ph_blue'
             ]
     ],
     5:[
@@ -144,18 +138,18 @@ piece = {
             'pi_white':[(255,255,255),False,{},0],
             
             #mix pigments
-            'pi_orange':[(255,127,0),False,{},('ph_green', 'pi_red',1)],
-            'pi_violet':[(255,0,127),False,{},('ph_blue', 'pi_red',1)],
-            'pi_pink':[(255,127,127),False,{},('ph_cyan', 'pi_red',1)],
-            'pi_lime':[(127,255,0),False,{},('ph_red', 'pi_green',1)],
-            'pi_mint':[(0,255,127),False,{},('ph_blue', 'pi_green',1)],
-            'pi_pistachio':[(127,255,127),False,{},('ph_violet', 'pi_green',1)],
-            'pi_purple':[(127,0,255),False,{},('ph_red', 'pi_blue',1)],
-            'pi_mBlue':[(0,127,255),False,{},('ph_green', 'pi_blue',1)],
-            'pi_lilac':[(127,127,255),False,{},('ph_yellow', 'pi_blue',1)],
-            'pi_blueS':[(127,255,255),False,{},('ph_red', 'pi_cyan',1)],
-            'pi_pearl':[(255,127,255),False,{},('ph_green', 'pi_violet',1)],
-            'pi_beige':[(255,255,127),False,{},('ph_blue', 'pi_yellow',1)],
+            'pi_orange':[(255,127,0),False,{},('ph_green', 'pi_red',0)],
+            'pi_violet':[(255,0,127),False,{},('ph_blue', 'pi_red',0)],
+            'pi_pink':[(255,127,127),False,{},('ph_cyan', 'pi_red',0)],
+            'pi_lime':[(127,255,0),False,{},('ph_red', 'pi_green',0)],
+            'pi_mint':[(0,255,127),False,{},('ph_blue', 'pi_green',0)],
+            'pi_pistachio':[(127,255,127),False,{},('ph_violet', 'pi_green',0)],
+            'pi_purple':[(127,0,255),False,{},('ph_red', 'pi_blue',0)],
+            'pi_mBlue':[(0,127,255),False,{},('ph_green', 'pi_blue',0)],
+            'pi_lilac':[(127,127,255),False,{},('ph_yellow', 'pi_blue',0)],
+            'pi_blueS':[(127,255,255),False,{},('ph_red', 'pi_cyan',0)],
+            'pi_pearl':[(255,127,255),False,{},('ph_green', 'pi_magenta',0)],
+            'pi_beige':[(255,255,127),False,{},('ph_blue', 'pi_yellow',0)],
             
             #empty space
             0:[(105, 105, 105),False,{},0]

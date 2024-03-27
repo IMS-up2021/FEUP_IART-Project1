@@ -150,18 +150,20 @@ def main_menu():
         
 def choose_level():
     screen = initialize_screen()
-    level_buttons = []
+    loop = True
     
-    while True:
+    while loop:
         screen.fill((0, 0, 0))
 
         display_text(screen, "LEVEL SELECT", 60, (139, 0, 39), (640, 100))
 
-        level_1 = create_button((640, 250), "1", 40, (128, 0, 32), (100 ,100 ,100))
-        level_2 = create_button((640 ,400), "2", 40,(200 ,200 ,200), (100 ,100 ,100))
-        back_button = create_button((640 ,550), "BACK", 40,(200 ,200 ,200), (100 ,100 ,100))
+        level_1 = create_button((427, 250), "1", 40, (128, 0, 32), (100 ,100 ,100))
+        level_2 = create_button((854, 250), "2", 40,(200 ,200 ,200), (100 ,100 ,100))
+        level_3 = create_button((427, 400), "3", 40,(200 ,200 ,200), (100 ,100 ,100))
+        level_4 = create_button((854, 400), "4", 40,(200 ,200 ,200), (100 ,100 ,100))
+        back_button = create_button((640, 550), "BACK", 40,(200 ,200 ,200), (100 ,100 ,100))
 
-        for button in [level_1, level_2, back_button]:
+        for button in [level_1, level_2, level_3, level_4, back_button]:
             button.rect = pygame.Rect(button.pos[0] - 180 ,button.pos[1] - 40 ,360 ,80)
             button.changeColor(pygame.mouse.get_pos())
             button.update(screen)
@@ -178,9 +180,14 @@ def choose_level():
                 if level_2.checkForInput(mouse_pos):
                     teste = copy.deepcopy(drop.LEVELS[2])
                     play(teste)
+                if level_3.checkForInput(mouse_pos):
+                    teste = copy.deepcopy(drop.LEVELS[3])
+                    play(teste)
+                if level_4.checkForInput(mouse_pos):
+                    teste = copy.deepcopy(drop.LEVELS[4])
+                    play(teste)
                 elif back_button.checkForInput(mouse_pos):
-                    pygame.quit()
-                    sys.exit()
+                    loop = False
 
         pygame.display.update()
     
