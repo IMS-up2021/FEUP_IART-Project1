@@ -208,3 +208,29 @@ def move(state, to):
     state[1] = [-1, 'none']
     
     return state  
+
+def photon_in_place(photon, place):
+    if place == photon:
+        return True
+    elif piece[place][3] == 0:
+        return False
+    elif piece[place][3][0] == photon:
+        return True
+    else:
+        return photon_in_place(photon, piece[place][3][1])
+
+def filter_photon(board, photon):
+    result = []
+    for place in board:
+        if place == 0 or place == photon:
+            result.append((place,0))
+        elif res := photon_in_place(photon, place): 
+            result.append((photon, 1))
+        elif place in piece[photon][2]:
+            result.append(('merge',1))
+        else:
+            result.append(('blocked', 99))
+    return result
+
+if __name__ == "__main__":
+    print(filter_photon(LEVELS[1][0], 'ph_green'))
