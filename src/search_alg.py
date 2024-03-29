@@ -1,4 +1,5 @@
 from drop import check_can_piece_split, split, check_can_move, move
+import drop
 from collections import deque
 
 def bidirectional_search(initial_state, goal_state):
@@ -52,3 +53,61 @@ def get_successors(state, reverse=False):
         successors = [(s, m) for s, m in successors][::-1]
 
     return successors
+
+def init_informed(initial_state, goal_state, algo):
+    to_move_pos = []
+    goal_pos_dist = {}
+    moves = {}
+        
+    for i in range(len(initial_state)):
+        if initial_state[i][0] in drop.piece and initial_state[i][0] != 0:
+            to_move_pos.append(i)
+        if goal_state[i][0] in drop.piece and goal_state[i][0] != 0:
+            goal_pos_dist[i] = drop.dist_to_goal(i)
+            
+    for pos in to_move_pos:
+        selected = (99,99) 
+        
+        for goal in goal_pos_dist:
+            if goal_pos_dist[goal][pos] <= selected[0]:
+                selected = (goal_pos_dist[goal][pos], goal)
+            
+        if algo:
+            print(f'pos: {pos}')
+            moves[pos] = greedy([], pos, selected[1], initial_state, goal_state, goal_pos_dist[selected[1]])
+            goal_pos_dist.pop(selected[1])
+            
+        '''
+        else:
+            A*
+        ''' 
+        print('done')
+        
+    return moves
+
+def greedy(prev, fr, to, initial_state, goal_state, distances):
+    if fr == to:
+        return [to]
+    
+    ret = []
+    
+    mini = (99,99)
+    
+    for place in drop.nodes[fr][0]:
+        to_check = initial_state[place][0]
+        if to_check != 'blocked'and to_check != goal_state[to][0] and not place in prev and distances[place] < mini[0]:
+            mini = (distances[place], place)
+    
+    prev.append(fr)
+    ret.append(fr)
+    
+    print(f'{mini[1]} -> {initial_state[mini[1]][0]}')
+    
+    return ret + greedy(prev, mini[1], to, initial_state, goal_state, distances)
+
+if __name__ == "__main__":
+    print(init_informed(
+        [(0, 0), (0, 0), ('merge', 1), (0, 0), (0, 0), (0, 0), (0, 0), ('ph_green', 1), (0, 0), ('blocked', 99), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), ('blocked', 99), (0, 0), (0, 0)],
+        [(0, 0), (0, 0), ('merge', 1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), ('blocked', 99), (0, 0), ('ph_green', 1), (0, 0), (0, 0), (0, 0), (0, 0), ('blocked', 99), (0, 0), (0, 0)],
+        True
+    ))
