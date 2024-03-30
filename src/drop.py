@@ -238,11 +238,11 @@ def dist(x,y):
 
 def dist_to_goal(goal):
     dists = {}
-    for i in range(0,18):
+    for i in range(0,19):
         dists[i] = dist(i, goal)
     return dists 
 
 if __name__ == "__main__":
-    print(filter_photon(LEVELS[3][0], 'ph_green'))
-    print(filter_photon(LEVELS[3][3], 'ph_green'))
+    print(filter_photon(LEVELS[1][0], 'ph_green'))
+    print(filter_photon(LEVELS[1][3], 'ph_green'))
     print(dist_to_goal(9))

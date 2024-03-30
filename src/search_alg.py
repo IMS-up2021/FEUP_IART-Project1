@@ -99,7 +99,7 @@ def init_informed(initial_state, goal_state, algo):
             moves[pos] = greedy([], pos, selected[1], initial_state, goal_state, goal_pos_dist[selected[1]])
             goal_pos_dist.pop(selected[1])
         else:
-            moves[pos] = a_star(pos, selected[1], goal_pos_dist[selected[1]])
+            moves[pos] = a_star(pos, selected[1], initial_state, goal_pos_dist[selected[1]])
             goal_pos_dist.pop(selected[1])
             
         print('done')
@@ -116,7 +116,7 @@ def greedy(prev, fr, to, initial_state, goal_state, distances):
     
     for place in drop.nodes[fr][0]:
         to_check = initial_state[place][0]
-        if to_check != 'blocked'and to_check != goal_state[to][0] and not place in prev and distances[place] < mini[0]:
+        if to_check != 'blocked' and to_check != goal_state[to][0] and not place in prev and distances[place] < mini[0]:
             mini = (distances[place], place)
     
     prev.append(fr)
@@ -124,30 +124,30 @@ def greedy(prev, fr, to, initial_state, goal_state, distances):
     
     return ret + greedy(prev, mini[1], to, initial_state, goal_state, distances)
 
-def a_star(fr, to, distances):
+def a_star(fr, to, initial_state, distances):
     frontier = queue.PriorityQueue()
     reached = [fr]
     dist_walked = 0
    
-    frontier.put((distances[fr], fr, fr)) #(dist, selected, father_node) 
+    frontier.put((distances[fr], fr, fr, [])) #(dist, selected, father_node) 
    
     while frontier:
         selected = frontier.get()
         dist_walked = drop.dist(selected[1], selected[2])
        
         if selected[1] == to:
-            return selected[1]
+            return selected[3] + [to]
        
         for node in drop.nodes[selected[1]][0]:
-            if not node in reached and distances[node] < distances[selected[1]]:
-                frontier.put((distances[node] + dist_walked, node, selected[1]))
+            if initial_state[node][0] != 'blocked' and initial_state[node][0] != initial_state[fr][0] and not node in reached and distances[node] < distances[selected[1]]:
+                frontier.put((distances[node] + dist_walked, node, selected[1], selected[3] + [selected[1]]))
                 reached.append(node)
 
     return -1
 
 if __name__ == "__main__":
     print(init_informed(
-        [(0, 0), (0, 0), ('merge', 1), (0, 0), (0, 0), (0, 0), (0, 0), ('ph_green', 1), (0, 0), ('blocked', 99), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), ('blocked', 99), (0, 0), (0, 0)],
-        [(0, 0), (0, 0), ('merge', 1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), ('blocked', 99), (0, 0), ('ph_green', 1), (0, 0), (0, 0), (0, 0), (0, 0), ('blocked', 99), (0, 0), (0, 0)],
-        True
+        [(0, 0), (0, 0), ('merge', 1), ('merge', 1), (0, 0), ('merge', 1), ('ph_green', 0), (0, 0), (0, 0), (0, 0), ('ph_green', 0), (0, 0), ('merge', 1), ('ph_green', 0), ('merge', 1), (0, 0), ('merge', 1), (0, 0), (0, 0)],
+        [(0, 0), (0, 0), (0, 0), (0, 0), ('ph_green', 1), (0, 0), (0, 0), (0, 0), ('merge', 1), ('ph_green', 1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), ('ph_green', 1), (0, 0), (0, 0), (0, 0)],
+        False
     ))
