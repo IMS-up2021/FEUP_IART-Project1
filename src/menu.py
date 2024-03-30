@@ -1,5 +1,5 @@
 from math import sqrt
-import pygame, sys, drop, copy
+import pygame, sys, drop, copy, search_alg, time
 
 pygame.init()
 
@@ -217,15 +217,23 @@ def choose_level(algo):
                 if level_1.checkForInput(mouse_pos):
                     if algo == 0:
                         play_loop(1)
+                    else:
+                        algo_play(copy.deepcopy(drop.LEVELS[1]), algo)
                 if level_2.checkForInput(mouse_pos):
                     if algo == 0:
                         play_loop(2)
+                    else:
+                        algo_play(copy.deepcopy(drop.LEVELS[2]), algo)
                 if level_3.checkForInput(mouse_pos):
                     if algo == 0:
                         play_loop(3)
+                    else:
+                        algo_play(copy.deepcopy(drop.LEVELS[3]), algo)
                 if level_4.checkForInput(mouse_pos):
                     if algo == 0:
                         play_loop(4)
+                    else:
+                        algo_play(copy.deepcopy(drop.LEVELS[4]), algo)
                 elif back_button.checkForInput(mouse_pos):
                     loop = False
 
@@ -256,11 +264,11 @@ def algo_choose():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if greedy.checkForInput(mouse_pos):
-                    choose_level(1)
-                if a_star.checkForInput(mouse_pos):
-                    choose_level(2)
                 if bidirectional.checkForInput(mouse_pos):
+                    choose_level(1)
+                if greedy.checkForInput(mouse_pos):
+                    choose_level(2)
+                if a_star.checkForInput(mouse_pos):
                     choose_level(3)
                 elif back_button.checkForInput(mouse_pos):
                     loop = False
@@ -365,6 +373,83 @@ def play(state):
                             state[1] = [-1, 'none', 0]
 
         pygame.display.update()
+        
+def algo_play(state, algo):
+    screen = initialize_screen()
+
+    run = True
+    font = pygame.font.Font(None, 36)
+    
+    make_board(state[0],False)
+    make_board(state[3],True)
+    
+    moves = []
+    
+    red_filter = (drop.filter_photon(state[0], 'ph_red'),drop.filter_photon(state[3], 'ph_red'))
+    blue_filter = (drop.filter_photon(state[0], 'ph_blue'),drop.filter_photon(state[3], 'ph_blue'))
+    green_filter = (drop.filter_photon(state[0], 'ph_green'),drop.filter_photon(state[3], 'ph_green'))
+    
+    for filtered in [red_filter, blue_filter, green_filter]:
+        if not filtered:
+            continue
+        elif algo == 1:
+            print('hello') #here
+        elif algo == 2:
+            moves.append(search_alg.init_informed(filtered[0], filtered[1],True))
+        elif algo == 3:
+            moves.append(search_alg.init_informed(filtered[0], filtered[1],False))
+        else:
+            return 
+        
+    print(moves)
+    
+    for color in moves:
+        for key in color:
+            for i in range(len(color[key])):
+                screen.fill((0 ,0 ,0))
+                
+                draw_board(state[0], screen)
+                draw_goal(state[3], screen)
+                
+                text_surface = font.render("Moves: " + str(state[2]), True, (255, 255, 255))
+                text_rect = text_surface.get_rect(center=(60, 20))
+                screen.blit(text_surface, text_rect)
+
+                if state[1][0] in drop.piece:
+                    pygame.draw.circle(screen, drop.piece[state[1][0]][0], (80,100), 20)
+                else:
+                    pygame.draw.circle(screen, drop.piece[0][0], (80,100), 20)
+                
+                if i != 0:
+                    if not drop.check_can_piece_split(state, color[key][i-1]):
+                        state = drop.split(state,color[key][i-1])
+                    else:   
+                        state[1] = [state[0][color[key][i-1]], color[key][i-1], 0]
+                        state[0][color[key][i-1]] = 0
+                        
+                    state = drop.move(state, color[key][i])
+                
+                time.sleep(0.5)
+
+                pygame.display.update()
+
+    screen.fill((0 ,0 ,0))
+                
+    draw_board(state[0], screen)
+    draw_goal(state[3], screen)
+                
+    text_surface = font.render("Moves: " + str(state[2]), True, (255, 255, 255))
+    text_rect = text_surface.get_rect(center=(60, 20))
+    screen.blit(text_surface, text_rect)
+
+    if state[1][0] in drop.piece:
+        pygame.draw.circle(screen, drop.piece[state[1][0]][0], (80,100), 20)
+    else:
+        pygame.draw.circle(screen, drop.piece[0][0], (80,100), 20)
+        
+    pygame.display.update()
+    
+    time.sleep(3)
 
 def options():
     screen = initialize_screen()

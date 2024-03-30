@@ -78,6 +78,9 @@ def merge_photon_paths(source_paths, target_paths):
     return merged_paths
 
 def init_informed(initial_state, goal_state, algo):
+    if initial_state == []:
+        return {} 
+    
     to_move_pos = []
     goal_pos_dist = {}
     moves = {}
@@ -92,8 +95,9 @@ def init_informed(initial_state, goal_state, algo):
         selected = (99,99) 
         
         for goal in goal_pos_dist:
-            if goal_pos_dist[goal][pos] <= selected[0]:
-                selected = (goal_pos_dist[goal][pos], goal)
+            check = not goal in drop.nodes[pos][0]
+            if goal_pos_dist[goal][pos] + check <= selected[0]:
+                selected = (goal_pos_dist[goal][pos] + check, goal)
             
         if algo:
             moves[pos] = greedy([], pos, selected[1], initial_state, goal_state, goal_pos_dist[selected[1]])
@@ -101,14 +105,15 @@ def init_informed(initial_state, goal_state, algo):
         else:
             moves[pos] = a_star(pos, selected[1], initial_state, goal_pos_dist[selected[1]])
             goal_pos_dist.pop(selected[1])
-            
-        print('done')
         
     return moves
 
 def greedy(prev, fr, to, initial_state, goal_state, distances):
     if fr == to:
         return [to]
+    
+    if fr == 99:
+        return []
     
     ret = []
     
@@ -128,6 +133,7 @@ def a_star(fr, to, initial_state, distances):
     frontier = queue.PriorityQueue()
     reached = [fr]
     dist_walked = 0
+    print(f'from {fr} -> {to}')
    
     frontier.put((distances[fr], fr, fr, [])) #(dist, selected, father_node) 
    
@@ -139,7 +145,7 @@ def a_star(fr, to, initial_state, distances):
             return selected[3] + [to]
        
         for node in drop.nodes[selected[1]][0]:
-            if initial_state[node][0] != 'blocked' and initial_state[node][0] != initial_state[fr][0] and not node in reached and distances[node] < distances[selected[1]]:
+            if initial_state[node][0] != 'blocked' and initial_state[node][0] != initial_state[fr][0] and not node in reached: #and distances[node] < distances[selected[1]]:
                 frontier.put((distances[node] + dist_walked, node, selected[1], selected[3] + [selected[1]]))
                 reached.append(node)
 
@@ -147,7 +153,7 @@ def a_star(fr, to, initial_state, distances):
 
 if __name__ == "__main__":
     print(init_informed(
-        [(0, 0), (0, 0), ('merge', 1), ('merge', 1), (0, 0), ('merge', 1), ('ph_green', 0), (0, 0), (0, 0), (0, 0), ('ph_green', 0), (0, 0), ('merge', 1), ('ph_green', 0), ('merge', 1), (0, 0), ('merge', 1), (0, 0), (0, 0)],
-        [(0, 0), (0, 0), (0, 0), (0, 0), ('ph_green', 1), (0, 0), (0, 0), (0, 0), ('merge', 1), ('ph_green', 1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), ('ph_green', 1), (0, 0), (0, 0), (0, 0)],
+        drop.filter_photon(drop.LEVELS[1][0], 'ph_blue'),
+        drop.filter_photon(drop.LEVELS[1][3], 'ph_blue'),
         False
     ))

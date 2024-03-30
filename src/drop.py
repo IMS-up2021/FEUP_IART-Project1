@@ -92,30 +92,6 @@ LEVELS = {
             'pi_white',
             0,'ph_blue'
             ]
-    ],
-    5:[
-        [   
-            0,0,
-            0,
-            0,0,
-            0,0,
-            'purple',0,0,0,'yellow',
-            0,0,
-            0,0,
-            0,
-            0,0
-            ], 0, 6,
-            [
-            0,0,
-            0,
-            0,'red',
-            0,0,
-            0,0,'white',0,0,
-            0,0,
-            0,0,
-            0,
-            0,0
-            ]
     ]
 }
 
@@ -188,6 +164,8 @@ def split(state, pos):
     if check_can_piece_split(state, pos):
         return state
     
+    print('reached')
+    
     state[1] = [piece[state[0][pos]][3][0], pos, state[2]]
     state[2] = state[2] - piece[state[0][pos]][3][2]
     state[0][pos] = piece[state[0][pos]][3][1]
@@ -225,7 +203,7 @@ def filter_photon(board, photon): #(status, extra_value -> +1 to merge, 0 to mov
     for place in board:
         if place == 0 or place == photon:
             result.append((place,0))
-        elif res := photon_in_place(photon, place): 
+        elif photon_in_place(photon, place): 
             result.append((photon, 1))
         elif place in piece[photon][2]:
             result.append(('merge',1))
@@ -243,6 +221,6 @@ def dist_to_goal(goal):
     return dists 
 
 if __name__ == "__main__":
-    print(filter_photon(LEVELS[1][0], 'ph_green'))
-    print(filter_photon(LEVELS[1][3], 'ph_green'))
+    print(filter_photon(LEVELS[1][0], 'ph_blue'))
+    print(filter_photon(LEVELS[1][3], 'ph_blue'))
     print(dist_to_goal(9))
