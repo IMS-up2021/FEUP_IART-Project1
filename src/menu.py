@@ -160,11 +160,12 @@ def main_menu():
 
         display_text(screen, "MAIN MENU", 60, (139, 0, 39), (640, 100))
 
-        play_button = create_button((640, 250), "PLAY", 40, (128, 0, 32), (100 ,100 ,100))
+        play_button = create_button((427, 250), "PLAY", 40, (128, 0, 32), (100 ,100 ,100))
+        algo_button = create_button((854, 250), "ALGORITHMS", 40, (128, 0, 32), (100 ,100 ,100))
         options_button = create_button((640 ,400), "INSTRUCTIONS", 40,(200 ,200 ,200), (100 ,100 ,100))
         quit_button = create_button((640 ,550), "QUIT", 40,(200 ,200 ,200), (100 ,100 ,100))
 
-        for button in [play_button ,options_button ,quit_button]:
+        for button in [play_button , algo_button, options_button ,quit_button]:
             button.rect = pygame.Rect(button.pos[0] - 180 ,button.pos[1] - 40 ,360 ,80)
             button.changeColor(pygame.mouse.get_pos())
             button.update(screen)
@@ -176,7 +177,9 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if play_button.checkForInput(mouse_pos):
-                    choose_level()
+                    choose_level(0)
+                if algo_button.checkForInput(mouse_pos):
+                    algo_choose()
                 elif options_button.checkForInput(mouse_pos):
                     options()
                 elif quit_button.checkForInput(mouse_pos):
@@ -185,7 +188,7 @@ def main_menu():
 
         pygame.display.update()
         
-def choose_level():
+def choose_level(algo):
     screen = initialize_screen()
     loop = True
     
@@ -194,7 +197,7 @@ def choose_level():
 
         display_text(screen, "LEVEL SELECT", 60, (139, 0, 39), (640, 100))
 
-        level_1 = create_button((427, 250), "1", 40, (128, 0, 32), (100 ,100 ,100))
+        level_1 = create_button((427, 250), "1", 40,(200 ,200 ,200), (100 ,100 ,100))
         level_2 = create_button((854, 250), "2", 40,(200 ,200 ,200), (100 ,100 ,100))
         level_3 = create_button((427, 400), "3", 40,(200 ,200 ,200), (100 ,100 ,100))
         level_4 = create_button((854, 400), "4", 40,(200 ,200 ,200), (100 ,100 ,100))
@@ -212,13 +215,53 @@ def choose_level():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if level_1.checkForInput(mouse_pos):
-                    play_loop(1)
+                    if algo == 0:
+                        play_loop(1)
                 if level_2.checkForInput(mouse_pos):
-                    play_loop(2)
+                    if algo == 0:
+                        play_loop(2)
                 if level_3.checkForInput(mouse_pos):
-                    play_loop(3)
+                    if algo == 0:
+                        play_loop(3)
                 if level_4.checkForInput(mouse_pos):
-                    play_loop(4)
+                    if algo == 0:
+                        play_loop(4)
+                elif back_button.checkForInput(mouse_pos):
+                    loop = False
+
+        pygame.display.update() 
+        
+def algo_choose():
+    screen = initialize_screen()
+    loop = True
+    
+    while loop:
+        screen.fill((0, 0, 0))
+
+        display_text(screen, "SELECT ALGORITHM", 60, (139, 0, 39), (640, 100))
+
+        greedy = create_button((427, 250), "GREEDY", 40,(200 ,200 ,200), (100 ,100 ,100))
+        a_star = create_button((854, 250), "A*", 40,(200 ,200 ,200), (100 ,100 ,100))
+        bidirectional = create_button((640, 400), "BIDIRECT", 40,(200 ,200 ,200), (100 ,100 ,100))
+        back_button = create_button((640, 550), "BACK", 40,(200 ,200 ,200), (100 ,100 ,100))
+
+        for button in [greedy, a_star, bidirectional, back_button]:
+            button.rect = pygame.Rect(button.pos[0] - 180 ,button.pos[1] - 40 ,360 ,80)
+            button.changeColor(pygame.mouse.get_pos())
+            button.update(screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if greedy.checkForInput(mouse_pos):
+                    choose_level(1)
+                if a_star.checkForInput(mouse_pos):
+                    choose_level(2)
+                if bidirectional.checkForInput(mouse_pos):
+                    choose_level(3)
                 elif back_button.checkForInput(mouse_pos):
                     loop = False
 
