@@ -1,6 +1,7 @@
 from drop import check_can_piece_split, split, check_can_move, move
 import drop
 from collections import deque, defaultdict
+import queue
 
 def bidirectional_search(initial_state, goal_state):
     queue_source = deque([(initial_state, [], defaultdict(list))])
@@ -12,6 +13,7 @@ def bidirectional_search(initial_state, goal_state):
 
         for _ in range(len(queue_source)):
             state, path, photon_paths = queue_source.popleft()
+            print(visited_target)
             if state in visited_target:
                 target_photon_paths = visited_target[state][2]
                 merged_photon_paths = merge_photon_paths(photon_paths, target_photon_paths)
@@ -60,6 +62,21 @@ def get_successors(state, photon_paths, reverse=False):
 
     return successors
 
+def update_photon_paths(photon_paths, photon, old_pos, new_pos):
+    new_photon_paths = photon_paths.copy()
+    new_photon_paths[photon].append(new_pos)
+    if old_pos != -1:
+        new_photon_paths[photon].append(old_pos)
+    return new_photon_paths
+
+def merge_photon_paths(source_paths, target_paths):
+    merged_paths = defaultdict(list)
+    for photon, path in source_paths.items():
+        merged_paths[photon] = path
+    for photon, path in target_paths.items():
+        merged_paths[photon] = path + merged_paths[photon]
+    return merged_paths
+
 def init_informed(initial_state, goal_state, algo):
     to_move_pos = []
     goal_pos_dist = {}
@@ -79,14 +96,12 @@ def init_informed(initial_state, goal_state, algo):
                 selected = (goal_pos_dist[goal][pos], goal)
             
         if algo:
-            print(f'pos: {pos}')
             moves[pos] = greedy([], pos, selected[1], initial_state, goal_state, goal_pos_dist[selected[1]])
             goal_pos_dist.pop(selected[1])
-            
-        '''
         else:
-            A*
-        ''' 
+            moves[pos] = a_star(pos, selected[1], goal_pos_dist[selected[1]])
+            goal_pos_dist.pop(selected[1])
+            
         print('done')
         
     return moves
@@ -107,24 +122,28 @@ def greedy(prev, fr, to, initial_state, goal_state, distances):
     prev.append(fr)
     ret.append(fr)
     
-    print(f'{mini[1]} -> {initial_state[mini[1]][0]}')
-    
     return ret + greedy(prev, mini[1], to, initial_state, goal_state, distances)
 
-def update_photon_paths(photon_paths, photon, old_pos, new_pos):
-    new_photon_paths = photon_paths.copy()
-    new_photon_paths[photon].append(new_pos)
-    if old_pos != -1:
-        new_photon_paths[photon].append(old_pos)
-    return new_photon_paths
+def a_star(fr, to, distances):
+    frontier = queue.PriorityQueue()
+    reached = [fr]
+    dist_walked = 0
+   
+    frontier.put((distances[fr], fr, fr)) #(dist, selected, father_node) 
+   
+    while frontier:
+        selected = frontier.get()
+        dist_walked = drop.dist(selected[1], selected[2])
+       
+        if selected[1] == to:
+            return selected[1]
+       
+        for node in drop.nodes[selected[1]][0]:
+            if not node in reached and distances[node] < distances[selected[1]]:
+                frontier.put((distances[node] + dist_walked, node, selected[1]))
+                reached.append(node)
 
-def merge_photon_paths(source_paths, target_paths):
-    merged_paths = defaultdict(list)
-    for photon, path in source_paths.items():
-        merged_paths[photon] = path
-    for photon, path in target_paths.items():
-        merged_paths[photon] = path + merged_paths[photon]
-    return merged_paths
+    return -1
 
 if __name__ == "__main__":
     print(init_informed(
