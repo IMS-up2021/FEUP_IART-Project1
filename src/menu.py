@@ -317,8 +317,9 @@ def play(state):
                     if state[1][0] == -1 and chosen_space != -1:
                         state = drop.split(state, chosen_space)
                     else:
-                        state[0][state[1][1]] = state[1][0]
-                        state[1] = [-1, 'none', 0]
+                        if state[1][0] != -1:
+                            state[0][state[1][1]] = state[1][0]
+                            state[1] = [-1, 'none', 0]
 
         pygame.display.update()
 

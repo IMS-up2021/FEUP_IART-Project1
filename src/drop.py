@@ -179,7 +179,7 @@ def check_can_merge(state, to): #can merge color
     return state[0][to] in piece[state[1][0]][2]
 
 def check_can_move(state, to): #can move to space (empty and connected)
-    return not(to in nodes[state[1][1]][1])
+    return not(to in nodes[state[1][1]][0])
 
 def check_win(state):
     return state[0] == state[3]
