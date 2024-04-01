@@ -220,7 +220,3 @@ def dist_to_goal(goal):
         dists[i] = dist(i, goal)
     return dists 
 
-if __name__ == "__main__":
-    print(filter_photon(LEVELS[1][0], 'ph_blue'))
-    print(filter_photon(LEVELS[1][3], 'ph_blue'))
-    print(dist_to_goal(9))

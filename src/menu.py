@@ -393,7 +393,7 @@ def algo_play(state, algo):
         if not filtered:
             continue
         elif algo == 1:
-            print('hello') #here
+            print("something")
         elif algo == 2:
             moves.append(search_alg.init_informed(filtered[0], filtered[1],True))
         elif algo == 3:
