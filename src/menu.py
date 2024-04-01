@@ -377,7 +377,6 @@ def play(state):
 def algo_play(state, algo):
     screen = initialize_screen()
 
-    run = True
     font = pygame.font.Font(None, 36)
     
     make_board(state[0],False)
@@ -392,8 +391,6 @@ def algo_play(state, algo):
     for filtered in [red_filter, blue_filter, green_filter]:
         if not filtered:
             continue
-        elif algo == 1:
-            print("something")
         elif algo == 2:
             moves.append(search_alg.init_informed(filtered[0], filtered[1],True))
         elif algo == 3:

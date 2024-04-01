@@ -3,6 +3,7 @@ import drop
 from collections import deque, defaultdict
 import queue
 
+'''
 def dfs(state, goal, depth_limit):
     if depth_limit == 0:
         return None  # Limite de profundidade atingido sem encontrar uma solução
@@ -25,9 +26,12 @@ def dfs(state, goal, depth_limit):
                     return [i] + result
     
     return None  # Se nenhum movimento válido for encontrado, retorna None
+'''
 
+'''
 def solve_game(start_state, goal_state, max_depth):
     return dfs(start_state, goal_state, max_depth)
+'''
 
 def init_informed(initial_state, goal_state, algo):
     if initial_state == []:
@@ -108,8 +112,3 @@ if __name__ == "__main__":
         drop.filter_photon(drop.LEVELS[1][0], 'ph_blue'),
         drop.filter_photon(drop.LEVELS[1][3], 'ph_blue'),
         False))
-    
-    print(solve_game(
-        drop.LEVELS[1],
-        drop.LEVELS[1][3], drop.LEVELS[1][2])
-    )
