@@ -103,6 +103,14 @@ The application is organized into multiple files for improved readability and ma
     - It selects the next move by choosing the position with the minimum distance to the goal.
     - It recursively calls itself until reaching the goal position.
     - It returns the sequence of moves required to reach the goal.
+  
+
+This project was made by:
+
+| Student                 | number      | email                     |
+|-------------------------|-------------|---------------------------|
+| André Dantas Rogrigues  | 202108721   | up202108721@edu.fe.up.pt  |
+| Inês Martin Soares      | 202108852   | up202108852@edu.fe.up.pt  |
 
 5. **A Search Algorithm\*** (a_star() function):
     - This function implements the A* search algorithm.
